@@ -9,3 +9,124 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 }
+
+@theme {
+    --color-base-50: #F9FAFB;
+    --color-base-100: #F1F3F6;
+    --color-base-200: #E1E5EA;
+    --color-base-300: #C9CFD8;
+    --color-base-400: #9AA3B2;
+    --color-base-500: #6B7280;
+    --color-base-600: #4B5563;
+    --color-base-700: #374151;
+    --color-base-800: #1F2937;
+    --color-base-900: #111827;
+}
+
+@theme {
+    --color-core-50: #F3F7FB;
+    --color-core-100: #E4EDF7;
+    --color-core-200: #C6D9EE;
+    --color-core-300: #9EBEE1;
+    --color-core-400: #6F9ED1;
+    --color-core-500: #3F7FC1;
+    --color-core-600: #3267A0;
+    --color-core-700: #29537F;
+    --color-core-800: #224463;
+    --color-core-900: #1C354B;
+}
+
+@theme {
+    --color-ok-50: #F2FBF7;
+    --color-ok-100: #E0F5EC;
+    --color-ok-200: #B9E8D6;
+    --color-ok-300: #86D7BB;
+    --color-ok-400: #4FC09A;
+    --color-ok-500: #2E9E78;
+    --color-ok-600: #23815F;
+    --color-ok-700: #1D684D;
+    --color-ok-800: #19553F;
+    --color-ok-900: #123E2F;
+}
+
+@theme {
+    --color-warn-50: #FFFBF2;
+    --color-warn-100: #FEF2D9;
+    --color-warn-200: #FDE2AE;
+    --color-warn-300: #FBCF7D;
+    --color-warn-400: #F7B84B;
+    --color-warn-500: #E5961A;
+    --color-warn-600: #C07612;
+    --color-warn-700: #985B0F;
+    --color-warn-800: #7A470F;
+    --color-warn-900: #58330B;
+}
+
+@theme {
+    --color-fail-50: #FEF4F3;
+    --color-fail-100: #FDE5E2;
+    --color-fail-200: #FACBC4;
+    --color-fail-300: #F6A39A;
+    --color-fail-400: #EE6D60;
+    --color-fail-500: #D63A2F;
+    --color-fail-600: #B12D25;
+    --color-fail-700: #8C231D;
+    --color-fail-800: #701C19;
+    --color-fail-900: #4E1412;
+}
+
+/* Login styles */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+@theme {                      
+    --secondary-container: #86f2e4;
+    --error: #ba1a1a;
+    --primary: #1a56db; 
+    --primary-container: #1a56db;
+    --on-surface-variant: #434654;
+    --inverse-surface: #2e3132;
+    --tertiary-fixed-dim: #ffb59a;
+    --on-primary-fixed-variant: #003dab;
+    --surface-container-low: #f3f4f5;
+    --primary-fixed: #dbe1ff;
+    --surface-container-highest: #e1e3e4;
+    --tertiary-fixed: #ffdbcf;
+    --primary-fixed-dim: #b5c4ff;
+    --on-error: #ffffff;
+    --secondary-fixed: #89f5e7;
+    --surface-bright: #f8f9fa;
+    --on-tertiary-fixed-variant: #802a00;
+    --error-container: #ffdad6;
+    --inverse-primary: #b5c4ff;
+    --background: #f8f9fa;
+    --surface-container: #edeeef;
+    --secondary-fixed-dim: #6bd8cb;
+    --outline-variant: #c3c5d7;
+    --on-secondary-fixed: #00201d;
+    --tertiary-container: #ad3b00;
+    --on-secondary-container: #006f66;
+    --on-tertiary-fixed: #380d00;
+    --surface: #f8f9fa;
+    --on-secondary: #ffffff;
+    --surface-variant: #e1e3e4;
+    --on-error-container: #93000a;
+    --outline: #737686;
+    --on-tertiary-container: #ffd4c5;
+    --on-background: #191c1d;
+    --on-primary-fixed: #00174d;
+    --on-primary-container: #d4dcff;
+    --surface-dim: #d9dadb;
+    --secondary: #006a61;
+    --surface-container-lowest: #ffffff;
+    --surface-container-high: #e7e8e9;
+    --on-primary: #ffffff;
+    --inverse-on-surface: #f0f1f2;
+    --tertiary: #852b00;
+    --on-surface: #191c1d;
+    --surface-tint: #1353d8;
+    --on-tertiary: #ffffff;
+    --on-secondary-fixed-variant: #005049;
+}
+
