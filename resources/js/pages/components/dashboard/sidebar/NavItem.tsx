@@ -1,30 +1,55 @@
-import { LucideIcon } from "lucide-react"
-import { Link } from "@inertiajs/react"
+'use client';
+
+import { LucideIcon } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 type NavItemProps = {
-    collapsed: boolean
-    label: string
-    icon: LucideIcon,
-    href: string,
-    active?: boolean
-}
+    collapsed: boolean;
+    label: string;
+    icon: LucideIcon;
+    href: string;
+    active?: boolean;
+};
 
-export function NavItem({ collapsed, label, icon: Icon, href, active = false }: NavItemProps) {
+export function NavItem({
+    collapsed,
+    label,
+    icon: Icon,
+    href,
+    active = false,
+}: NavItemProps) {
     return (
-        <Link
-            href={href}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md text-base-600 hover:bg-base-100 mx-2
-            ${active
-                    ? 'bg-core-400 text-core-900 font-medium'
-                    : 'text-base-600 hover:bg-base-100'
-                }
-        `}
-        >
-            <Icon className={`h-5 w-5 text-base-500
-                ${active ? 'text-core-600' : 'text-base-500'
-                }
-                `} />
-            {!collapsed && <span>{label}</span>}
-        </Link>
-    )
+        <div className="relative group">
+            <Link
+                href={href}
+                className={`mx-2 flex items-center gap-3 rounded-md px-2 py-2 text-sm font-semibold transition-all border ${
+                    active
+                        ? 'bg-blue-800 text-white border-blue-800'
+                        : 'text-blue-700 border-transparent hover:bg-blue-100'
+                }`}
+            >
+                <Icon
+                    className={`h-5 w-5 ${
+                        active ? 'text-white' : 'text-blue-800'
+                    }`}
+                />
+
+                {!collapsed && <span>{label}</span>}
+            </Link>
+
+            {/* 🔥 Tooltip sem gap real */}
+            {collapsed && (
+                <div className="pointer-events-none absolute left-full top-1/2 z-50 -translate-y-1/2 translate-x-1 opacity-0 scale-95 transition-all duration-150 ease-out group-hover:opacity-100 group-hover:scale-100">
+                    
+                    {/* área “ponte” invisível */}
+                    <div className="pl-2">
+                        <div className="whitespace-nowrap rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-medium text-white shadow-lg">
+                            {label}
+                        </div>
+                    </div>
+
+                </div>
+            )}
+        </div>
+    );
 }

@@ -1,5 +1,5 @@
 export type AvatarProps = {
-  name: string
-  imageUrl?: string | null
-  size?: number
-}
+    name: string;
+    imageUrl?: string | null;
+    size?: number;
+};

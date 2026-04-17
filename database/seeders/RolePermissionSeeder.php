@@ -3,11 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -16,7 +15,7 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $modules = [
             'users' => ['view', 'create', 'update', 'delete', 'manager'],
@@ -36,7 +35,7 @@ class RolePermissionSeeder extends Seeder
                 $permission = Permission::firstOrCreate(
                     ['name' => $name, 'guard_name' => 'web'],
                     [
-                        'description' => ucfirst($action) . ' ' . ucfirst($module),
+                        'description' => ucfirst($action).' '.ucfirst($module),
                     ]
                 );
 
@@ -51,35 +50,35 @@ class RolePermissionSeeder extends Seeder
                 'users.view',
                 'permissions.view',
                 'roles.view',
-                'dashboard'
+                'dashboard',
             ],
             'users.manager' => [
                 'users.manager',
                 'users.view',
                 'users.create',
                 'users.update',
-                'users.delete'
+                'users.delete',
             ],
             'permissions.manager' => [
-                'permissions.manager'
+                'permissions.manager',
             ],
             'roles.manager' => [
-                'roles.manager'
+                'roles.manager',
             ],
         ];
 
         foreach ($roles as $roleName => $perms) {
             $role = Role::firstOrCreate(
-                ['name' => $roleName, 'guard_name' => 'web'],
+                ['name' => $roleName, 'guard_name' => 'web', 'description' => $roleName],
             );
 
             $role->syncPermissions($perms);
         }
 
-        $superUser = User::where('email', 'proaction.adm@mail.com')->first();
+        $superUser = User::where('email', config('app.user_email'))->first();
 
         if ($superUser) {
-            $superUser->assignRole('super-admin');
+            $superUser->assignRole('super.admin');
         }
     }
 }

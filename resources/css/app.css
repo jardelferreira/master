@@ -11,79 +11,83 @@
 }
 
 @theme {
-    --color-base-50: #F9FAFB;
-    --color-base-100: #F1F3F6;
-    --color-base-200: #E1E5EA;
-    --color-base-300: #C9CFD8;
-    --color-base-400: #9AA3B2;
-    --color-base-500: #6B7280;
-    --color-base-600: #4B5563;
+    --color-base-50: #f9fafb;
+    --color-base-100: #f1f3f6;
+    --color-base-200: #e1e5ea;
+    --color-base-300: #c9cfd8;
+    --color-base-400: #9aa3b2;
+    --color-base-500: #6b7280;
+    --color-base-600: #4b5563;
     --color-base-700: #374151;
-    --color-base-800: #1F2937;
+    --color-base-800: #1f2937;
     --color-base-900: #111827;
 }
 
 @theme {
-    --color-core-50: #F3F7FB;
-    --color-core-100: #E4EDF7;
-    --color-core-200: #C6D9EE;
-    --color-core-300: #9EBEE1;
-    --color-core-400: #6F9ED1;
-    --color-core-500: #3F7FC1;
-    --color-core-600: #3267A0;
-    --color-core-700: #29537F;
+    --color-core-50: #f3f7fb;
+    --color-core-100: #e4edf7;
+    --color-core-200: #c6d9ee;
+    --color-core-300: #9ebee1;
+    --color-core-400: #6f9ed1;
+    --color-core-500: #3f7fc1;
+    --color-core-600: #3267a0;
+    --color-core-700: #29537f;
     --color-core-800: #224463;
-    --color-core-900: #1C354B;
+    --color-core-900: #1c354b;
 }
 
 @theme {
-    --color-ok-50: #F2FBF7;
-    --color-ok-100: #E0F5EC;
-    --color-ok-200: #B9E8D6;
-    --color-ok-300: #86D7BB;
-    --color-ok-400: #4FC09A;
-    --color-ok-500: #2E9E78;
-    --color-ok-600: #23815F;
-    --color-ok-700: #1D684D;
-    --color-ok-800: #19553F;
-    --color-ok-900: #123E2F;
+    --color-ok-50: #f2fbf7;
+    --color-ok-100: #e0f5ec;
+    --color-ok-200: #b9e8d6;
+    --color-ok-300: #86d7bb;
+    --color-ok-400: #4fc09a;
+    --color-ok-500: #2e9e78;
+    --color-ok-600: #23815f;
+    --color-ok-700: #1d684d;
+    --color-ok-800: #19553f;
+    --color-ok-900: #123e2f;
 }
 
 @theme {
-    --color-warn-50: #FFFBF2;
-    --color-warn-100: #FEF2D9;
-    --color-warn-200: #FDE2AE;
-    --color-warn-300: #FBCF7D;
-    --color-warn-400: #F7B84B;
-    --color-warn-500: #E5961A;
-    --color-warn-600: #C07612;
-    --color-warn-700: #985B0F;
-    --color-warn-800: #7A470F;
-    --color-warn-900: #58330B;
+    --color-warn-50: #fffbf2;
+    --color-warn-100: #fef2d9;
+    --color-warn-200: #fde2ae;
+    --color-warn-300: #fbcf7d;
+    --color-warn-400: #f7b84b;
+    --color-warn-500: #e5961a;
+    --color-warn-600: #c07612;
+    --color-warn-700: #985b0f;
+    --color-warn-800: #7a470f;
+    --color-warn-900: #58330b;
 }
 
 @theme {
-    --color-fail-50: #FEF4F3;
-    --color-fail-100: #FDE5E2;
-    --color-fail-200: #FACBC4;
-    --color-fail-300: #F6A39A;
-    --color-fail-400: #EE6D60;
-    --color-fail-500: #D63A2F;
-    --color-fail-600: #B12D25;
-    --color-fail-700: #8C231D;
-    --color-fail-800: #701C19;
-    --color-fail-900: #4E1412;
+    --color-fail-50: #fef4f3;
+    --color-fail-100: #fde5e2;
+    --color-fail-200: #facbc4;
+    --color-fail-300: #f6a39a;
+    --color-fail-400: #ee6d60;
+    --color-fail-500: #d63a2f;
+    --color-fail-600: #b12d25;
+    --color-fail-700: #8c231d;
+    --color-fail-800: #701c19;
+    --color-fail-900: #4e1412;
 }
 
 /* Login styles */
 .material-symbols-outlined {
-    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
 }
 
-@theme {                      
+@theme {
     --secondary-container: #86f2e4;
     --error: #ba1a1a;
-    --primary: #1a56db; 
+    --primary: #1a56db;
     --primary-container: #1a56db;
     --on-surface-variant: #434654;
     --inverse-surface: #2e3132;
@@ -129,4 +133,3 @@
     --on-tertiary: #ffffff;
     --on-secondary-fixed-variant: #005049;
 }
-

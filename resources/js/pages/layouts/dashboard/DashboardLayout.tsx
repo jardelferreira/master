@@ -1,21 +1,19 @@
-import { PropsWithChildren, useState } from 'react'
-import Header from '@/pages/components/dashboard/Header'
-import { LucideIcon, Home, Users } from 'lucide-react'
-import { Sidebar } from '@/pages/components/dashboard/Sidebar'
-import { usePage } from '@inertiajs/react'
-import type {PageProps} from '@/types/inertia.d'
-import { navigation } from '@/pages/config/SidebarDashboard'
+import { PropsWithChildren, useState } from 'react';
+import Header from '@/pages/components/dashboard/Header';
+import { Sidebar } from '@/pages/components/dashboard/Sidebar';
+import { navigation } from '@/pages/config/SidebarDashboard';
+import FlashMessage from '@/components/alerts/SweetAlertFlashMessage';
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
     return (
-        <div className="min-h-screen bg-base-50 flex">
-
-            <Sidebar navigation={navigation}/>
+        <div className="flex min-h-screen bg-gradient-to-b to-blue-100 from-blue-200 ">
+            <Sidebar navigation={navigation} />
             {/* Main */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex flex-1 flex-col">
                 <Header />
+                <FlashMessage />
                 {children}
             </div>
         </div>
-    )
+    );
 }

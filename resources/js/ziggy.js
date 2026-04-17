@@ -1,5 +1,167 @@
-const Ziggy = {"url":"http:\/\/localhost","port":null,"defaults":{},"routes":{"boost.browser-logs":{"uri":"_boost\/browser-logs","methods":["POST"]},"horizon.stats.index":{"uri":"horizon\/api\/stats","methods":["GET","HEAD"]},"horizon.workload.index":{"uri":"horizon\/api\/workload","methods":["GET","HEAD"]},"horizon.masters.index":{"uri":"horizon\/api\/masters","methods":["GET","HEAD"]},"horizon.monitoring.index":{"uri":"horizon\/api\/monitoring","methods":["GET","HEAD"]},"horizon.monitoring.store":{"uri":"horizon\/api\/monitoring","methods":["POST"]},"horizon.monitoring-tag.paginate":{"uri":"horizon\/api\/monitoring\/{tag}","methods":["GET","HEAD"],"parameters":["tag"]},"horizon.monitoring-tag.destroy":{"uri":"horizon\/api\/monitoring\/{tag}","methods":["DELETE"],"wheres":{"tag":".*"},"parameters":["tag"]},"horizon.jobs-metrics.index":{"uri":"horizon\/api\/metrics\/jobs","methods":["GET","HEAD"]},"horizon.jobs-metrics.show":{"uri":"horizon\/api\/metrics\/jobs\/{id}","methods":["GET","HEAD"],"parameters":["id"]},"horizon.queues-metrics.index":{"uri":"horizon\/api\/metrics\/queues","methods":["GET","HEAD"]},"horizon.queues-metrics.show":{"uri":"horizon\/api\/metrics\/queues\/{id}","methods":["GET","HEAD"],"parameters":["id"]},"horizon.jobs-batches.index":{"uri":"horizon\/api\/batches","methods":["GET","HEAD"]},"horizon.jobs-batches.show":{"uri":"horizon\/api\/batches\/{id}","methods":["GET","HEAD"],"parameters":["id"]},"horizon.jobs-batches.retry":{"uri":"horizon\/api\/batches\/retry\/{id}","methods":["POST"],"parameters":["id"]},"horizon.pending-jobs.index":{"uri":"horizon\/api\/jobs\/pending","methods":["GET","HEAD"]},"horizon.completed-jobs.index":{"uri":"horizon\/api\/jobs\/completed","methods":["GET","HEAD"]},"horizon.silenced-jobs.index":{"uri":"horizon\/api\/jobs\/silenced","methods":["GET","HEAD"]},"horizon.failed-jobs.index":{"uri":"horizon\/api\/jobs\/failed","methods":["GET","HEAD"]},"horizon.failed-jobs.show":{"uri":"horizon\/api\/jobs\/failed\/{id}","methods":["GET","HEAD"],"parameters":["id"]},"horizon.retry-jobs.show":{"uri":"horizon\/api\/jobs\/retry\/{id}","methods":["POST"],"parameters":["id"]},"horizon.jobs.show":{"uri":"horizon\/api\/jobs\/{id}","methods":["GET","HEAD"],"parameters":["id"]},"horizon.index":{"uri":"horizon\/{view?}","methods":["GET","HEAD"],"wheres":{"view":"(.*)"},"parameters":["view"]},"home":{"uri":"\/","methods":["GET","HEAD"]},"storage.local":{"uri":"storage\/{path}","methods":["GET","HEAD"],"wheres":{"path":".*"},"parameters":["path"]},"storage.local.upload":{"uri":"storage\/{path}","methods":["PUT"],"wheres":{"path":".*"},"parameters":["path"]}}};
+const Ziggy = {
+    url: 'http:\/\/localhost',
+    port: null,
+    defaults: {},
+    routes: {
+        'boost.browser-logs': {
+            uri: '_boost\/browser-logs',
+            methods: ['POST'],
+        },
+        'login.store': { uri: 'login', methods: ['POST'] },
+        logout: { uri: 'logout', methods: ['POST'] },
+        'password.email': { uri: 'forgot-password', methods: ['POST'] },
+        'password.update': { uri: 'reset-password', methods: ['POST'] },
+        'register.store': { uri: 'register', methods: ['POST'] },
+        'verification.verify': {
+            uri: 'email\/verify\/{id}\/{hash}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['id', 'hash'],
+        },
+        'verification.send': {
+            uri: 'email\/verification-notification',
+            methods: ['POST'],
+        },
+        'user-profile-information.update': {
+            uri: 'user\/profile-information',
+            methods: ['PUT'],
+        },
+        'user-password.update': { uri: 'user\/password', methods: ['PUT'] },
+        'password.confirmation': {
+            uri: 'user\/confirmed-password-status',
+            methods: ['GET', 'HEAD'],
+        },
+        'password.confirm.store': {
+            uri: 'user\/confirm-password',
+            methods: ['POST'],
+        },
+        'horizon.stats.index': {
+            uri: 'horizon\/api\/stats',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.workload.index': {
+            uri: 'horizon\/api\/workload',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.masters.index': {
+            uri: 'horizon\/api\/masters',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.monitoring.index': {
+            uri: 'horizon\/api\/monitoring',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.monitoring.store': {
+            uri: 'horizon\/api\/monitoring',
+            methods: ['POST'],
+        },
+        'horizon.monitoring-tag.paginate': {
+            uri: 'horizon\/api\/monitoring\/{tag}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['tag'],
+        },
+        'horizon.monitoring-tag.destroy': {
+            uri: 'horizon\/api\/monitoring\/{tag}',
+            methods: ['DELETE'],
+            wheres: { tag: '.*' },
+            parameters: ['tag'],
+        },
+        'horizon.jobs-metrics.index': {
+            uri: 'horizon\/api\/metrics\/jobs',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.jobs-metrics.show': {
+            uri: 'horizon\/api\/metrics\/jobs\/{id}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['id'],
+        },
+        'horizon.queues-metrics.index': {
+            uri: 'horizon\/api\/metrics\/queues',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.queues-metrics.show': {
+            uri: 'horizon\/api\/metrics\/queues\/{id}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['id'],
+        },
+        'horizon.jobs-batches.index': {
+            uri: 'horizon\/api\/batches',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.jobs-batches.show': {
+            uri: 'horizon\/api\/batches\/{id}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['id'],
+        },
+        'horizon.jobs-batches.retry': {
+            uri: 'horizon\/api\/batches\/retry\/{id}',
+            methods: ['POST'],
+            parameters: ['id'],
+        },
+        'horizon.pending-jobs.index': {
+            uri: 'horizon\/api\/jobs\/pending',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.completed-jobs.index': {
+            uri: 'horizon\/api\/jobs\/completed',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.silenced-jobs.index': {
+            uri: 'horizon\/api\/jobs\/silenced',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.failed-jobs.index': {
+            uri: 'horizon\/api\/jobs\/failed',
+            methods: ['GET', 'HEAD'],
+        },
+        'horizon.failed-jobs.show': {
+            uri: 'horizon\/api\/jobs\/failed\/{id}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['id'],
+        },
+        'horizon.retry-jobs.show': {
+            uri: 'horizon\/api\/jobs\/retry\/{id}',
+            methods: ['POST'],
+            parameters: ['id'],
+        },
+        'horizon.jobs.show': {
+            uri: 'horizon\/api\/jobs\/{id}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['id'],
+        },
+        'horizon.index': {
+            uri: 'horizon\/{view?}',
+            methods: ['GET', 'HEAD'],
+            wheres: { view: '(.*)' },
+            parameters: ['view'],
+        },
+        home: { uri: '\/', methods: ['GET', 'HEAD'] },
+        dashboard: { uri: 'home', methods: ['GET', 'HEAD'] },
+        login: { uri: 'login', methods: ['GET', 'HEAD'] },
+        register: { uri: 'register', methods: ['GET', 'HEAD'] },
+        'password.request': {
+            uri: 'forgot-password',
+            methods: ['GET', 'HEAD'],
+        },
+        'password.reset': {
+            uri: 'reset-password\/{token}',
+            methods: ['GET', 'HEAD'],
+            parameters: ['token'],
+        },
+        'storage.local': {
+            uri: 'storage\/{path}',
+            methods: ['GET', 'HEAD'],
+            wheres: { path: '.*' },
+            parameters: ['path'],
+        },
+        'storage.local.upload': {
+            uri: 'storage\/{path}',
+            methods: ['PUT'],
+            wheres: { path: '.*' },
+            parameters: ['path'],
+        },
+    },
+};
 if (typeof window !== 'undefined' && typeof window.Ziggy !== 'undefined') {
-  Object.assign(Ziggy.routes, window.Ziggy.routes);
+    Object.assign(Ziggy.routes, window.Ziggy.routes);
 }
 export { Ziggy };

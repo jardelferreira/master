@@ -1,9 +1,9 @@
 import { Link, router } from '@inertiajs/react';
 
 export default function Home() {
-  return (
-    <>
-      <style>{`
+    return (
+        <>
+            <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
@@ -507,221 +507,297 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-inner">
-          <div className="navbar-logo font-headline">Estoque Master</div>
+            {/* Navbar */}
+            <nav className="navbar">
+                <div className="navbar-inner">
+                    <div className="navbar-logo font-headline">
+                        Estoque Master
+                    </div>
 
-          <div className="navbar-links">
-            <a href="#" className="active">Início</a>
-            <a href="#funcionalidades">Funcionalidades</a>
-            <a href="#beneficios">Sobre</a>
-          </div>
-        <Link href="/login" className="btn-primary">
-          Entrar
-        </Link>
-        </div>
-      </nav>
-
-      <main>
-
-        {/* Hero */}
-        <section className="hero">
-          <div className="hero-grid">
-
-            <div>
-              <span className="hero-badge">Gestão Inteligente</span>
-              <h1 className="hero-title font-headline">
-                Controle total do seu{" "}
-                <span className="highlight">almoxarifado</span>
-              </h1>
-              <p className="hero-desc">
-                Gerencie EPIs, equipamentos e insumos com precisão cirúrgica.
-                Reduza perdas em até 30% e mantenha sua equipe segura com um
-                inventário sempre atualizado.
-              </p>
-              <div className="hero-cta">
-                <button className="btn-primary">Acessar sistema</button>
-                <button className="btn-secondary">Ver demonstração</button>
-              </div>
-            </div>
-
-            <div className="hero-image-wrap">
-              <div className="hero-image-glow" />
-              <div className="hero-image-card">
-                <img
-                  src="/gestao.png"
-                  alt="Dashboard view"
-                />
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* Funcionalidades */}
-        <section id="funcionalidades" className="features">
-          <div className="features-inner">
-
-            <h2 className="section-label font-headline">Arquitetura de Controle</h2>
-            <p className="section-sub">
-              Funcionalidades desenhadas para eliminar a incerteza e automatizar
-              o fluxo de materiais da sua empresa.
-            </p>
-
-            <div className="bento-grid">
-
-              {/* Card grande */}
-              <div className="bento-card bento-card-lg">
-                <div>
-                  <div className="bento-icon" style={{ background: "#dbe1ff" }}>
-                    <span className="material-symbols-outlined" style={{ color: "#003fb1" }}>inventory_2</span>
-                  </div>
-                  <h3 className="bento-card-title font-headline">Controle de estoque</h3>
-                  <p className="bento-card-desc">
-                    Rastreamento em tempo real de entradas e saídas com
-                    notificações inteligentes de baixo nível de estoque.
-                  </p>
+                    <div className="navbar-links">
+                        <a href="#" className="active">
+                            Início
+                        </a>
+                        <a href="#funcionalidades">Funcionalidades</a>
+                        <a href="#beneficios">Sobre</a>
+                    </div>
+                    <Link href="/login" className="btn-primary">
+                        Entrar
+                    </Link>
                 </div>
-                <div className="tags-row">
-                  {["Entrada manual", "Leitor QR Code", "Sincronização Cloud"].map((t) => (
-                    <span key={t} className="tag">{t}</span>
-                  ))}
+            </nav>
+
+            <main>
+                {/* Hero */}
+                <section className="hero">
+                    <div className="hero-grid">
+                        <div>
+                            <span className="hero-badge">
+                                Gestão Inteligente
+                            </span>
+                            <h1 className="hero-title font-headline">
+                                Controle total do seu{' '}
+                                <span className="highlight">almoxarifado</span>
+                            </h1>
+                            <p className="hero-desc">
+                                Gerencie EPIs, equipamentos e insumos com
+                                precisão cirúrgica. Reduza perdas em até 30% e
+                                mantenha sua equipe segura com um inventário
+                                sempre atualizado.
+                            </p>
+                            <div className="hero-cta">
+                                <button className="btn-primary">
+                                    Acessar sistema
+                                </button>
+                                <button className="btn-secondary">
+                                    Ver demonstração
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="hero-image-wrap">
+                            <div className="hero-image-glow" />
+                            <div className="hero-image-card">
+                                <img src="/gestao.png" alt="Dashboard view" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Funcionalidades */}
+                <section id="funcionalidades" className="features">
+                    <div className="features-inner">
+                        <h2 className="section-label font-headline">
+                            Arquitetura de Controle
+                        </h2>
+                        <p className="section-sub">
+                            Funcionalidades desenhadas para eliminar a incerteza
+                            e automatizar o fluxo de materiais da sua empresa.
+                        </p>
+
+                        <div className="bento-grid">
+                            {/* Card grande */}
+                            <div className="bento-card bento-card-lg">
+                                <div>
+                                    <div
+                                        className="bento-icon"
+                                        style={{ background: '#dbe1ff' }}
+                                    >
+                                        <span
+                                            className="material-symbols-outlined"
+                                            style={{ color: '#003fb1' }}
+                                        >
+                                            inventory_2
+                                        </span>
+                                    </div>
+                                    <h3 className="bento-card-title font-headline">
+                                        Controle de estoque
+                                    </h3>
+                                    <p className="bento-card-desc">
+                                        Rastreamento em tempo real de entradas e
+                                        saídas com notificações inteligentes de
+                                        baixo nível de estoque.
+                                    </p>
+                                </div>
+                                <div className="tags-row">
+                                    {[
+                                        'Entrada manual',
+                                        'Leitor QR Code',
+                                        'Sincronização Cloud',
+                                    ].map((t) => (
+                                        <span key={t} className="tag">
+                                            {t}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Card azul */}
+                            <div className="bento-card-blue">
+                                <div
+                                    className="bento-icon"
+                                    style={{
+                                        background: 'rgba(255,255,255,0.2)',
+                                    }}
+                                >
+                                    <span
+                                        className="material-symbols-outlined icon-filled"
+                                        style={{ color: '#fff' }}
+                                    >
+                                        security
+                                    </span>
+                                </div>
+                                <h3 className="bento-card-title font-headline">
+                                    Gestão de EPIs
+                                </h3>
+                                <p className="bento-card-desc">
+                                    Controle rigoroso de entrega de equipamentos
+                                    de proteção individual por colaborador.
+                                </p>
+                            </div>
+
+                            {/* Card pequeno */}
+                            <div className="bento-card bento-card-sm">
+                                <div
+                                    className="bento-icon"
+                                    style={{ background: '#86f2e4' }}
+                                >
+                                    <span
+                                        className="material-symbols-outlined"
+                                        style={{ color: '#006a61' }}
+                                    >
+                                        construction
+                                    </span>
+                                </div>
+                                <h3 className="bento-card-title font-headline">
+                                    Equipamentos
+                                </h3>
+                                <p className="bento-card-desc">
+                                    Registro detalhado de máquinas e
+                                    ferramentas, histórico de uso e manutenção.
+                                </p>
+                            </div>
+
+                            {/* Card largo */}
+                            <div className="bento-card bento-card-wide">
+                                <div>
+                                    <h3 className="bento-card-title font-headline">
+                                        Relatórios e histórico
+                                    </h3>
+                                    <p className="bento-card-desc">
+                                        Visualize tendências de consumo e tome
+                                        decisões baseadas em dados reais com
+                                        exportação simplificada.
+                                    </p>
+                                </div>
+                                <span
+                                    className="material-symbols-outlined"
+                                    style={{
+                                        color: '#003fb1',
+                                        fontSize: '3.5rem',
+                                    }}
+                                >
+                                    analytics
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Benefícios */}
+                <section id="beneficios" className="benefits">
+                    <div className="benefits-grid">
+                        <div className="benefits-img-wrap">
+                            <img
+                                alt="Logistics efficiency"
+                                className="atmospheric-shadow rounded-xl"
+                                data-alt="Top down view of organized logistics warehouse shelves with warm cinematic lighting and professional workers using digital tablets"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYfk16OO9E7MsTefI5J4mirehYcRpSBDvgbMlOXM0q6Ycc85Q0jmpSpOdHDuTnJgGGPEKmDW6lM0-xM9Ud1k6n2Ef6aV2S0FPWIMBTBhIw-lT6kAH-l9HZa1AfMTGpvW507vjFdWBuRt4N9A6Kps--0cnJKh6ccfVto17kG6f0yazOImlSp0V6Vma4Wf7ffJyVuSaer6fe_NMAwMTnV_cWUI7-3TWJibOzZHjUV_X_gxllsC9HNeeoTxvQjfshPWMhY9u8i-7F_g"
+                            />
+                        </div>
+
+                        <div className="benefits-text">
+                            <h2 className="benefits-title font-headline">
+                                Por que escolher o{' '}
+                                <span className="highlight">
+                                    Estoque Master
+                                </span>
+                                ?
+                            </h2>
+
+                            {[
+                                {
+                                    icon: 'bolt',
+                                    title: 'Máxima Eficiência',
+                                    desc: 'Elimine formulários em papel e planilhas confusas. Tudo centralizado em um só lugar.',
+                                },
+                                {
+                                    icon: 'trending_down',
+                                    title: 'Redução de Perdas',
+                                    desc: 'Identifique desvios e desperdícios instantaneamente com o rastreamento individualizado.',
+                                },
+                                {
+                                    icon: 'devices',
+                                    title: 'Facilidade de Uso',
+                                    desc: 'Interface intuitiva que exige treinamento mínimo para sua equipe de campo.',
+                                },
+                            ].map(({ icon, title, desc }) => (
+                                <div key={title} className="benefit-item">
+                                    <div className="benefit-icon">
+                                        <span
+                                            className="material-symbols-outlined"
+                                            style={{ color: '#003fb1' }}
+                                        >
+                                            {icon}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-headline">
+                                            {title}
+                                        </h4>
+                                        <p>{desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* CTA */}
+                <section className="cta-section">
+                    <div className="cta-inner">
+                        <div className="cta-blob-1" />
+                        <div className="cta-blob-2" />
+                        <div className="cta-content">
+                            <h2 className="cta-title font-headline">
+                                Pronto para digitalizar seu estoque?
+                            </h2>
+                            <p className="cta-desc">
+                                Comece hoje mesmo a transformar seu almoxarifado
+                                em um centro de excelência logística.
+                            </p>
+                            <div className="cta-btns">
+                                <button className="btn-primary">
+                                    Fazer login
+                                </button>
+                                <button className="cta-btn-ghost">
+                                    Agendar demonstração
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            {/* Footer */}
+            <footer className="footer">
+                <div className="footer-inner">
+                    <div>
+                        <div className="footer-brand font-headline">
+                            Estoque Master
+                        </div>
+                        <p className="footer-copy">
+                            © {new Date().getFullYear()} Estoque Master. Todos
+                            os direitos reservados.
+                        </p>
+                    </div>
+
+                    <div className="footer-links">
+                        <a href="#">Termos de Uso</a>
+                        <a href="#">Privacidade</a>
+                    </div>
+
+                    <div className="footer-icons">
+                        {['share', 'mail'].map((icon) => (
+                            <div key={icon} className="footer-icon">
+                                <span className="material-symbols-outlined">
+                                    {icon}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-              </div>
-
-              {/* Card azul */}
-              <div className="bento-card-blue">
-                <div className="bento-icon" style={{ background: "rgba(255,255,255,0.2)" }}>
-                  <span className="material-symbols-outlined icon-filled" style={{ color: "#fff" }}>security</span>
-                </div>
-                <h3 className="bento-card-title font-headline">Gestão de EPIs</h3>
-                <p className="bento-card-desc">
-                  Controle rigoroso de entrega de equipamentos de proteção
-                  individual por colaborador.
-                </p>
-              </div>
-
-              {/* Card pequeno */}
-              <div className="bento-card bento-card-sm">
-                <div className="bento-icon" style={{ background: "#86f2e4" }}>
-                  <span className="material-symbols-outlined" style={{ color: "#006a61" }}>construction</span>
-                </div>
-                <h3 className="bento-card-title font-headline">Equipamentos</h3>
-                <p className="bento-card-desc">
-                  Registro detalhado de máquinas e ferramentas, histórico de uso
-                  e manutenção.
-                </p>
-              </div>
-
-              {/* Card largo */}
-              <div className="bento-card bento-card-wide">
-                <div>
-                  <h3 className="bento-card-title font-headline">Relatórios e histórico</h3>
-                  <p className="bento-card-desc">
-                    Visualize tendências de consumo e tome decisões baseadas em
-                    dados reais com exportação simplificada.
-                  </p>
-                </div>
-                <span className="material-symbols-outlined" style={{ color: "#003fb1", fontSize: "3.5rem" }}>analytics</span>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* Benefícios */}
-        <section id="beneficios" className="benefits">
-          <div className="benefits-grid">
-
-            <div className="benefits-img-wrap">
-              <img alt="Logistics efficiency" className="rounded-xl atmospheric-shadow" 
-              data-alt="Top down view of organized logistics warehouse shelves with warm cinematic lighting and professional workers using digital tablets" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYfk16OO9E7MsTefI5J4mirehYcRpSBDvgbMlOXM0q6Ycc85Q0jmpSpOdHDuTnJgGGPEKmDW6lM0-xM9Ud1k6n2Ef6aV2S0FPWIMBTBhIw-lT6kAH-l9HZa1AfMTGpvW507vjFdWBuRt4N9A6Kps--0cnJKh6ccfVto17kG6f0yazOImlSp0V6Vma4Wf7ffJyVuSaer6fe_NMAwMTnV_cWUI7-3TWJibOzZHjUV_X_gxllsC9HNeeoTxvQjfshPWMhY9u8i-7F_g"/>
-            </div>
-
-            <div className="benefits-text">
-              <h2 className="benefits-title font-headline">
-                Por que escolher o{" "}
-                <span className="highlight">Estoque Master</span>?
-              </h2>
-
-              {[
-                {
-                  icon: "bolt",
-                  title: "Máxima Eficiência",
-                  desc: "Elimine formulários em papel e planilhas confusas. Tudo centralizado em um só lugar.",
-                },
-                {
-                  icon: "trending_down",
-                  title: "Redução de Perdas",
-                  desc: "Identifique desvios e desperdícios instantaneamente com o rastreamento individualizado.",
-                },
-                {
-                  icon: "devices",
-                  title: "Facilidade de Uso",
-                  desc: "Interface intuitiva que exige treinamento mínimo para sua equipe de campo.",
-                },
-              ].map(({ icon, title, desc }) => (
-                <div key={title} className="benefit-item">
-                  <div className="benefit-icon">
-                    <span className="material-symbols-outlined" style={{ color: "#003fb1" }}>{icon}</span>
-                  </div>
-                  <div>
-                    <h4 className="font-headline">{title}</h4>
-                    <p>{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="cta-section">
-          <div className="cta-inner">
-            <div className="cta-blob-1" />
-            <div className="cta-blob-2" />
-            <div className="cta-content">
-              <h2 className="cta-title font-headline">Pronto para digitalizar seu estoque?</h2>
-              <p className="cta-desc">
-                Comece hoje mesmo a transformar seu almoxarifado em um centro de
-                excelência logística.
-              </p>
-              <div className="cta-btns">
-                <button className="btn-primary">Fazer login</button>
-                <button className="cta-btn-ghost">Agendar demonstração</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-inner">
-          <div>
-            <div className="footer-brand font-headline">Estoque Master</div>
-            <p className="footer-copy">© {new Date().getFullYear()} Estoque Master. Todos os direitos reservados.</p>
-          </div>
-
-          <div className="footer-links">
-            <a href="#">Termos de Uso</a>
-            <a href="#">Privacidade</a>
-          </div>
-
-          <div className="footer-icons">
-            {["share", "mail"].map((icon) => (
-              <div key={icon} className="footer-icon">
-                <span className="material-symbols-outlined">{icon}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </footer>
-
-    </>
-  );
+            </footer>
+        </>
+    );
 }

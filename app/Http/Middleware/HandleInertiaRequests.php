@@ -37,10 +37,14 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'name' => config('app.name'),
+            'app_name' => config('app.name'),
+            'emailVerificationEnabled' => (bool) config('fortify.email_verification'),
             'auth' => [
                 'user' => $request->user(),
+                'permissions' => $request->user()?->getAllPermissions()->pluck('name') ?? [],
+                'roles' => $request->user()?->getRoleNames() ?? [],
             ],
+            'flash' => fn () => session('feedback')
         ];
     }
 }

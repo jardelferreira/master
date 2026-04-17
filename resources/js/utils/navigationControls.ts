@@ -1,18 +1,18 @@
 export function isActive(active?: string | string[]): boolean {
-  if (!active) return false
+    if (!active) return false;
 
-  const current = route().current()
+    const current = route().current();
 
-  if (!current) return false
+    if (!current) return false;
 
-  const patterns = Array.isArray(active) ? active : [active]
+    const patterns = Array.isArray(active) ? active : [active];
 
-  return patterns.some(pattern => {
-    if (pattern.endsWith('.*')) {
-      const base = pattern.replace('.*', '')
-      return current.startsWith(base)
-    }
+    return patterns.some((pattern) => {
+        if (pattern.endsWith('.*')) {
+            const base = pattern.replace('.*', '');
+            return current.startsWith(base);
+        }
 
-    return current === pattern
-  })
+        return current === pattern;
+    });
 }
