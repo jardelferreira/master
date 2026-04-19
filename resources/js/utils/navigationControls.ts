@@ -1,18 +1,24 @@
-export function isActive(active?: string | string[]): boolean {
+export function isActive(active?: any): boolean {
     if (!active) return false;
 
-    const current = route().current();
+    const name = route().current();
+    const params = route().params || {};
 
-    if (!current) return false;
+    if (!name) return false;
+
+    // 🔥 função
+    if (typeof active === 'function') {
+        return active({ name, params });
+    }
 
     const patterns = Array.isArray(active) ? active : [active];
 
     return patterns.some((pattern) => {
         if (pattern.endsWith('.*')) {
             const base = pattern.replace('.*', '');
-            return current.startsWith(base);
+            return name.startsWith(base);
         }
 
-        return current === pattern;
+        return name === pattern;
     });
 }

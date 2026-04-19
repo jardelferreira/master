@@ -1,4 +1,4 @@
-import { Home, Users, ShieldCheck, UserLock, Building } from 'lucide-react';
+import { Home, UserLock, Building } from 'lucide-react';
 import { LucideIcon, WaypointsIcon, User, FolderGit2 } from 'lucide-react';
 
 export type BaseNavItem = {
@@ -9,7 +9,7 @@ export type BaseNavItem = {
     permission?: string;
     canAny?: string[];
     canAll?: string[];
-    active?: string | string[];
+    active?: string | string[] | ((ctx: any) => boolean);
 };
 
 export type NavLink = BaseNavItem & {
@@ -58,7 +58,7 @@ export const navigation: NavigationItem[] = [
             {
                 type: 'link',
                 label: 'Obra SP',
-                href: '/home',
+                href: route('admin.projects.show'),
                 icon: FolderGit2,
                 active: 'admin.projects.*',
             },

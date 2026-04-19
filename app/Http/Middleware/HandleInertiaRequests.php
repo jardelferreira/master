@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,7 +45,9 @@ class HandleInertiaRequests extends Middleware
                 'permissions' => $request->user()?->getAllPermissions()->pluck('name') ?? [],
                 'roles' => $request->user()?->getRoleNames() ?? [],
             ],
-            'flash' => fn () => session('feedback')
+            'flash' => fn () => session('feedback'),
+            'projects' => Project::all(),
+
         ];
     }
 }

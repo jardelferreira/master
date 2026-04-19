@@ -13,7 +13,21 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
+            $table->longText('description')->nullable();
+            $table->string('initials')->unique();
             $table->timestamps();
+        });
+
+        Schema::create('project_user', function(Blueprint $table){
+            $table->id();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('project_id')->references('id')->on('projects')->onDelete('cascade');
+            $table->date('admission')->nullable();
+            $table->timestamps();
+
         });
     }
 
@@ -22,6 +36,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('project_user');
         Schema::dropIfExists('projects');
     }
 };

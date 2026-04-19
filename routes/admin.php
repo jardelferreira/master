@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,6 @@ Route::middleware(['web','auth', 'verified'])->prefix('admin')->name('admin.')->
 
     Route::get('/permissions',[PermissionController::class,'index'])->name('permissions');
     
+    Route::get('/projects/show/{id}',[ProjectController::class,'show'])->name('projects.show');
+
 });

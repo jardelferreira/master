@@ -1,38 +1,30 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react'; // ← removido useMemo
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavItem } from '@/pages/components/dashboard/sidebar/NavItem';
-
-function resolveActive(active?: string | string[]) {
-    if (!active) return false;
-
-    if (Array.isArray(active)) {
-        return active.some((name) => route().current(name));
-    }
-
-    return route().current(active);
-}
+import { isActive } from '@/utils/navigationControls';
+import { usePage } from '@inertiajs/react'; // ← adicionado
 
 export function NavGroup({ group, collapsed, canShow }: any) {
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // 🔥 calcula corretamente
-    const visibleChildren = useMemo(
-        () => group.children.filter(canShow),
-        [group.children, canShow]
-    );
+    // usePage() faz o componente reagir a cada navegação do Inertia,
+    // garantindo que isActive() seja recalculado com a rota atual.
+    usePage();
 
-    const hasActiveChild = useMemo(
-        () => visibleChildren.some((item: any) => resolveActive(item.active)),
-        [visibleChildren]
+    // Sem useMemo: recalcula a cada render (que agora é acionado pelo usePage)
+    const visibleChildren = group.children.filter(canShow);
+
+    const hasActiveChild = visibleChildren.some((item: any) =>
+        isActive(item.active)
     );
 
     const [open, setOpen] = useState(hasActiveChild);
 
     useEffect(() => {
-        if (hasActiveChild) setOpen(true);
+        setOpen(hasActiveChild);
     }, [hasActiveChild]);
 
     // fechar ao clicar fora
@@ -47,13 +39,11 @@ export function NavGroup({ group, collapsed, canShow }: any) {
         };
 
         document.addEventListener('mousedown', handleClickOutside);
-        return () =>
-            document.removeEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     return (
         <div ref={containerRef} className="relative space-y-1 group">
-            {/* Botão */}
             <button
                 onClick={() => setOpen((v: boolean) => !v)}
                 className={`flex w-full font-bold items-center justify-between rounded-md px-3 py-2 border transition ${
@@ -69,14 +59,11 @@ export function NavGroup({ group, collapsed, canShow }: any) {
 
                 {!collapsed && (
                     <ChevronDown
-                        className={`h-4 w-4 transition-transform ${
-                            open ? 'rotate-180' : ''
-                        }`}
+                        className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`}
                     />
                 )}
             </button>
 
-            {/* EXPANDIDO */}
             <AnimatePresence>
                 {open && !collapsed && (
                     <motion.div
@@ -92,14 +79,13 @@ export function NavGroup({ group, collapsed, canShow }: any) {
                                 label={item.label}
                                 icon={item.icon}
                                 collapsed={false}
-                                active={resolveActive(item.active)}
+                                active={isActive(item.active)} // ← agora atualiza
                             />
                         ))}
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* COLLAPSED (CSS hover, sem state) */}
             {collapsed && (
                 <div className="absolute left-full top-0 z-50 ml-0 hidden w-56 rounded-xl border bg-white shadow-xl p-2 space-y-1 group-hover:block">
                     <div className="px-2 py-1 text-xs font-semibold text-gray-500">
@@ -113,7 +99,7 @@ export function NavGroup({ group, collapsed, canShow }: any) {
                             label={item.label}
                             icon={item.icon}
                             collapsed={false}
-                            active={resolveActive(item.active)}
+                            active={isActive(item.active)} // ← agora atualiza
                         />
                     ))}
                 </div>

@@ -1,4 +1,4 @@
-import { navigation, NavigationItem } from '@/pages/config/SidebarDashboard';
+import { NavigationItem } from '@/pages/config/SidebarDashboard';
 import { NavItem } from '@/pages/components/dashboard/sidebar/NavItem';
 import { NavGroup } from '@/pages/components/dashboard/sidebar/NavGroup';
 
