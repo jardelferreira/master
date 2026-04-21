@@ -1,11 +1,11 @@
 import { useRef, useEffect, useState } from "react";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, PlusCircle } from "lucide-react";
 
 type CardProps = {
     title: string;
     value: string | number;
     icon?: React.ReactNode;
-    variant?: "default" | "primary" | "danger" | "warning";
+    variant?: "default" | "primary" | "danger" | "warning" |"green";
     trend?: { value: number; label: string };
 };
 
@@ -50,6 +50,11 @@ export default function Card({
             icon: "bg-amber-100 text-amber-500",
             badge: "bg-amber-50 text-amber-600",
         },
+        green: {
+            border: "border-green-200",
+            icon: "bg-green-100 text-green-500",
+            badge: "bg-green-50 text-green-600",
+        },
     };
 
     const s = styles[variant];
@@ -75,9 +80,13 @@ export default function Card({
 
                     <button
                         onClick={() => setOpen((p) => !p)}
-                        className="p-1 rounded-lg text-slate-300 hover:text-slate-500 hover:bg-slate-100 transition opacity-0 group-hover:opacity-100"
+                        className={`p-1.5 rounded-lg cursor-pointer
+                                    text-blue-600 hover:text-white
+                                    bg-slate-100/70 hover:bg-blue-600
+                                    transition 
+                                `}
                     >
-                        <MoreVertical size={15} />
+                        <PlusCircle size={30} />
                     </button>
                 </div>
 

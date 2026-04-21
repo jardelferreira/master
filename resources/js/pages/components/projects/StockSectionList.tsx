@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import StockItem from "./StockListItem";
 
-export function StockSection({ stock }: { stock: any[] }) {
+export function StockSection({ stock, sectorsReal }: { stock: any[], sectorsReal: any[] }) {
     const [open, setOpen] = useState(true);
     const [sectorFilter, setSectorFilter] = useState("all");
     const [typeFilter, setTypeFilter] = useState<"all" | "in" | "out">("all");

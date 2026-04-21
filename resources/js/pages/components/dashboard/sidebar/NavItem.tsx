@@ -9,6 +9,7 @@ type NavItemProps = {
     icon: LucideIcon;
     href: string;
     active?: boolean;
+    onClick?: () => void
 };
 
 export function NavItem({
@@ -17,11 +18,13 @@ export function NavItem({
     icon: Icon,
     href,
     active = false,
+    onClick
 }: NavItemProps) {
     return (
         <div className="relative group">
             <Link
                 href={href}
+                onClick={onClick}
                 className={`mx-2 flex items-center gap-3 rounded-md px-2 py-2 text-sm font-semibold transition-all border ${
                     active
                         ? 'bg-blue-800 text-white border-blue-800'

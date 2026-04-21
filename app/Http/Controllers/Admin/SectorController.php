@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StoreSectorRequest;
 use App\Http\Requests\UpdateSectorRequest;
+use App\Http\Controllers\Controller;
 use App\Models\Sector;
+use Inertia\Inertia;
 
 class SectorController extends Controller
 {
@@ -29,7 +31,24 @@ class SectorController extends Controller
      */
     public function store(StoreSectorRequest $request)
     {
-        //
+        try {
+            $sector = Sector::create($request->all());
+            return session()->with('feedback',[
+                'success' => true,
+                'status' => 'success',
+                'message' => 'Setor criado com sucesso!',
+                'type' => 'toast',
+                'id' => uniqid(),
+            ]);
+        } catch (\Throwable $th) {
+            return session()->with('feedback',[
+                'success' => false,
+                'status' => 'error',
+                'message' => "Erro: {$th->getMessage()}",
+                'type' => 'toast',
+                'id' => uniqid(),
+            ]);
+        }
     }
 
     /**

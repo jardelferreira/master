@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserInvitationRequest;
 use App\Http\Requests\UpdateUserInvitationRequest;
 use App\Models\UserInvitation;
+use Inertia\Inertia;
 
 class UserInvitationController extends Controller
 {
@@ -13,7 +14,20 @@ class UserInvitationController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Users/InvitationsModal', [
+            'invitations' => UserInvitation::with('inviter:id,name')
+                ->latest()
+                ->get()
+                ->map(fn($inv) => [
+                    'id' => $inv->id,
+                    'email' => $inv->email,
+                    'status' => $inv->status,
+                    'expires_at' => $inv->expires_at->diffForHumans(),
+                    'accepted_at' => $inv->accepted_at,
+                    'invited_by' => $inv->inviter?->name,
+                    'link' => route('invitations.accept', $inv->uuid),
+                ]),
+        ]);
     }
 
     /**
@@ -62,5 +76,23 @@ class UserInvitationController extends Controller
     public function destroy(UserInvitation $userInvitation)
     {
         //
+    }
+
+    public function getInvitations()
+    {
+        return UserInvitation::with('inviter:id,name')
+            ->latest()
+            ->get()
+            ->map(fn($inv) => [
+                'id' => $inv->id,
+                'email' => $inv->email,
+                'status' => $inv->status,
+                'expires_at' => $inv->expires_at->diffForHumans(),
+                'invited_by' => $inv->inviter?->name,
+                'accepted_at' => $inv->accepted_at
+                    ? $inv->accepted_at->diffForHumans()
+                    : null,
+                'link' => route('invitations.show', $inv->uuid),
+            ]);
     }
 }

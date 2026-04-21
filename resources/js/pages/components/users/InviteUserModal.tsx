@@ -16,7 +16,7 @@ export default function InviteUserModal({ open, onClose }: Props) {
             email: '',
         });
 
-    function submit(e: React.FormEvent) {
+    function submit(e: React.SubmitEvent) {
         e.preventDefault();
 
         post(route('admin.users.invite'), {

@@ -13,6 +13,7 @@ export type SweetAlertFlashPayload = {
     status: AlertStatus;
     message: string;
     type?: 'toast' | 'modal';
+    id: string;
 };
 
 export const ICON_MAP: Record<AlertStatus, SweetAlertIcon> = {

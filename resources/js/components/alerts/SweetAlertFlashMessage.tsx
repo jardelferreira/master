@@ -7,7 +7,7 @@ export default function FlashMessage() {
     const { flash } = usePage<{ flash?: SweetAlertFlashPayload }>().props;
 
     useEffect(() => {
-        if (!flash) return;
+        if (!flash?.id) return;
 
         if (flash.type === 'modal') {
             import('@/lib/alerts/modal').then(({ showAlert }) =>
@@ -16,7 +16,7 @@ export default function FlashMessage() {
         } else {
             showToast(flash.status, flash.message);
         }
-    }, [flash?.status, flash?.message]);
+    }, [flash?.id]); 
 
     return null;
 }

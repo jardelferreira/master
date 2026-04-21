@@ -79,6 +79,7 @@ export function NavGroup({ group, collapsed, canShow }: any) {
                                 label={item.label}
                                 icon={item.icon}
                                 collapsed={false}
+                                onClick={item.onClick}
                                 active={isActive(item.active)} // ← agora atualiza
                             />
                         ))}
@@ -99,6 +100,7 @@ export function NavGroup({ group, collapsed, canShow }: any) {
                             label={item.label}
                             icon={item.icon}
                             collapsed={false}
+                            onClick={item.onClick}
                             active={isActive(item.active)} // ← agora atualiza
                         />
                     ))}

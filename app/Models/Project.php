@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name','slug','description','initials','uuid'])]
 #[ObservedBy([ProjectObserver::class])]
@@ -22,5 +23,10 @@ class Project extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+    
+    public function sectors():HasMany
+    {
+        return $this->hasMany(Sector::class);
     }
 }

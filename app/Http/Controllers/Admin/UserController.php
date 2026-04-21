@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateUserEmailRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Mail\UserInvitationMail;
 use App\Models\User;
 use App\Models\UserInvitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
@@ -18,7 +22,13 @@ class UserController extends Controller
     public function index()
     {
         return Inertia::render('dashboard/users/Index', [
-            'users' => User::select('id', 'name', 'email', 'created_at', 'active')->get(),
+            'users' => User::all()->map(fn($user) => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'created_at' => $user->created_at,
+                'email_verified_at' => $user->email_verified_at ? $user->email_verified_at->diffForHumans() : null,
+            ]),
         ]);
     }
 
@@ -38,6 +48,7 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => 'Ocorreu um erro ao criar o usuário. Por favor, tente novamente.',
                 'type' => 'toast',
+                'id' => uniqid(),
             ]);
         }
 
@@ -49,6 +60,7 @@ class UserController extends Controller
             'status' => 'success',
             'message' => 'Usuário criado com sucesso.',
             'type' => 'toast',
+            'id' => uniqid(),
         ]);
     }
 
@@ -66,6 +78,7 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => $availability['message'],
                 'type' => 'toast',
+                'id' => uniqid(),
             ]);
         }
 
@@ -82,6 +95,7 @@ class UserController extends Controller
                 'status' => 'success',
                 'message' => 'Convite enviado com sucesso.',
                 'type' => 'toast',
+                'id' => uniqid(),
             ]);
         } catch (\Exception $e) {
             Log::error('Erro ao enviar convite de usuário', [
@@ -94,6 +108,7 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => $e->getMessage(),
                 'type' => 'toast',
+                'id' => uniqid(),
             ]);
         }
     }
@@ -144,6 +159,7 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => 'Ocorreu um erro ao criar a conta. Por favor, tente novamente.',
                 'type' => 'toast',
+                'id' => uniqid(),
             ]);
         }
 
@@ -173,6 +189,7 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => 'Não foi possível alterar o status, usuário não encontrado',
                 'type' => 'toast',
+                'id' => uniqid(),
             ]);
         }
         $user->active = !$user->active;
@@ -183,6 +200,7 @@ class UserController extends Controller
             'status' => 'success',
             'message' => 'Status alterado com sucesso!',
             'type' => 'toast',
+            'id' => uniqid(),
         ]);
     }
 
@@ -194,16 +212,130 @@ class UserController extends Controller
                 'status' => 'error',
                 'message' => 'Usuário não encontrado',
                 'type' => 'toast',
+                'id' => uniqid(),
             ]);
         }
 
         $user->delete();
-        
+
         return back()->with('feedback', [
             'success' => true,
             'status' => 'success',
             'message' => 'Usuário excluído com sucesso!',
             'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+
+    public function update(User $user, UpdateUserRequest $request)
+    {
+        if (!$user->exists()) {
+            return back()->with('feedback', [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Não Foi possivel localizar o usuário!',
+                'type' => 'toast',
+                'id' => uniqid(),
+            ]);
+        }
+
+        $user->update($request->all());
+
+        return back()->with('feedback', [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Dados Atualizados com sucesso!',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+
+    public function updatePassword(User $user, UpdateUserPasswordRequest $request)
+    {
+        if (!$user->exists()) {
+            return back()->with('feedback', [
+                'success' => false,
+                'status' => 'error',
+                'message' => 'Não Foi possivel localizar o usuário!',
+                'type' => 'toast',
+                'id' => uniqid(),
+            ]);
+        }
+
+        $request['password'] = Hash::make($request->password);
+
+        $user->update($request->all());
+
+        return back()->with('feedback', [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Senha Atualizada com sucesso!',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+
+    public function updateEmail(User $user, UpdateUserEmailRequest $request)
+    {
+        $user->fill($request->all());
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        // 🔥 reenviar verificação
+        if ($user->wasChanged('email')) {
+            $user->sendEmailVerificationNotification();
+        }
+
+        return back()->with('feedback', [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'E-mail atualizado. Verifique sua caixa de entrada.',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+
+    public function  verifyEmail(User $user)
+    {
+        $user->markEmailAsVerified();
+        return back()->with('feedback', [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Email de usuário marcado como verificado.',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+    public function  unVerifyEmail(User $user)
+    {
+        $user->markEmailAsUnverified();
+        return back()->with('feedback', [
+            'success' => true,
+            'status' => 'success',
+            'message' => 'Email desmarcado como verificado.',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+
+    public function toggleVerify(User $user)
+    {
+        if ($user->hasVerifiedEmail()) {
+            $user->markEmailAsUnverified();
+            $message = 'Verificação removida';
+        } else {
+            $user->markEmailAsVerified();
+            $message = 'E-mail verificado com sucesso';
+        }
+
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => $message,
+            'type' => 'toast',
+            'id' => \Illuminate\Support\Str::uuid(),
         ]);
     }
 }

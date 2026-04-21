@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreProjectRequest extends FormRequest
+class UpdateUserEmailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +24,13 @@ class StoreProjectRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = User::where("id",$this->id)->first();
         return [
-            'name' => "required|min:3|max:150|unique:projects,name",
-            'description' => 'nullable',
-            'initials' => "required|min:2|max:20|unique:projects,initials"
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user),
+            ],
         ];
     }
 }

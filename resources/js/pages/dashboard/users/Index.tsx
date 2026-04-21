@@ -5,42 +5,35 @@ import { DataTable } from '@/pages/components/DataTable';
 import InviteUserModal from '@/pages/components/users/InviteUserModal';
 
 import {
+    Cog,
     Mail,
-    Pencil,
     Plus,
     ShieldCheck,
-    Sparkles,
+    ShieldOff,
     Trash2,
-    Users,
+    UserPlus,
 } from 'lucide-react';
 import { useState } from 'react';
 import ConfirmModal from '@/pages/components/ConfirmModal';
 import { usePermission } from '@/hooks/usePermission';
-import type { PageProps } from '@/types/inertia';
 import { ToggleUser } from '@/components/ui/ToggleControl';
 import { PageCard } from '@/pages/components/PageCard';
 import { PageContainer } from '@/pages/components/PageContainer';
-import { permissions } from '@/routes/admin';
-
-
-type User = {
-    id: number;
-    name: string;
-    email: string;
-    created_at: string;
-    active: boolean;
-};
-
-type UsersPageProps = PageProps & {
-    users: User[];
-    emailVerificationEnabled: boolean;
-};
+import UserActionsModal from '@/pages/components/users/UserActionsModal';
+import type { UsersPageProps, User } from '@/types/user';
+import InvitationsModal from '@/pages/components/users/InvitationsModal';
 
 export default function UsersIndex() {
-    const { users, auth, emailVerificationEnabled } = usePage<UsersPageProps>().props;
+    const { users, emailVerificationEnabled } = usePage<UsersPageProps>().props;
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [confirmToggleVerifyOpen, setConfirmToggleVerifyOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [inviteOpen, setInviteOpen] = useState(false);
+    const [invitationsModalOpen, setInvitationsModalOpen] = useState(false);
+    const [userOptionsModal, setUserOptionsModal] = useState(false);
+
+
+    const [selectedUser, setSelectedUser] = useState<User>();
     const { can } = usePermission();
 
     function openDeleteModal(userId: number) {
@@ -61,6 +54,13 @@ export default function UsersIndex() {
         });
     }
 
+    function confirmToggleVerifyEmail() {
+        if (!selectedUserId) return;
+        router.post(route('admin.users.toggleverify', selectedUserId), {}, {
+            onFinish: () => setConfirmToggleVerifyOpen(false)
+        })
+    }
+
     const allColumns: ColumnDef<User>[] = [
         {
             accessorKey: 'id',
@@ -76,6 +76,52 @@ export default function UsersIndex() {
         {
             accessorKey: 'email',
             header: 'E-mail',
+        },
+        {
+            accessorKey: 'created_at',
+            header: 'Criado em',
+            cell: ({ getValue }) =>
+                new Date(getValue<string>()).toLocaleDateString('pt-BR'),
+        },
+        {
+            accessorKey: 'email_verified_at',
+            header: 'E-mail Verificado',
+            cell: ({ row }) => {
+                const user = row.original;
+
+                const isVerified = !!user.email_verified_at;
+
+                function handleToggle() {
+                    const action = isVerified ? 'remover verificação' : 'verificar';
+                    setSelectedUserId(user.id)
+                    setConfirmToggleVerifyOpen(true)
+                }
+
+                return (
+                    <div className="flex items-center gap-2 cursor-point">
+
+                        {/* STATUS */}
+                        {isVerified
+                            ? <ShieldCheck className="text-emerald-600" size={20} />
+                            : <ShieldOff className="text-amber-500" size={20} />
+                        }
+
+                        {/* AÇÃO */}
+                        <button
+                            onClick={handleToggle}
+                            className={`text-sm px-2 py-1 rounded-lg transition cursor-pointer 
+                                ${isVerified ? 'bg-green-200' : 'bg-red-200'
+
+                                }
+                                `}
+                        >
+                            {isVerified ? 'Reverter' : 'Verificar'}
+                        </button>
+                        <span>{user.email_verified_at}</span>
+
+                    </div>
+                );
+            }
         },
         {
             accessorKey: 'active',
@@ -110,12 +156,6 @@ export default function UsersIndex() {
             },
         },
         {
-            accessorKey: 'created_at',
-            header: 'Criado em',
-            cell: ({ getValue }) =>
-                new Date(getValue<string>()).toLocaleDateString('pt-BR'),
-        },
-        {
             id: 'actions',
             header: 'Ações',
             meta: {
@@ -131,22 +171,25 @@ export default function UsersIndex() {
                 return (
                     <div className="flex justify-end gap-2">
                         {can('users.update') && (
-                            <Link
-                                href={route('admin.users', user.id)}
-                                className="rounded-md p-2 hover:bg-base-100"
-                                title="Editar"
+                            <button
+                                onClick={() => {
+                                    setSelectedUser(user)
+                                    setUserOptionsModal(true)
+                                }}
+                                className="rounded-md p-2 hover:bg-base-100 cursor-pointer"
+                                title="Confg. do Usuário"
                             >
-                                <Pencil className="h-4 w-4 text-core-600" />
-                            </Link>
+                                <Cog className="h-5 w-5 text-core-600"></Cog>
+                            </button>
                         )}
 
                         {can('users.delete') && (
                             <button
                                 onClick={() => openDeleteModal(user.id)}
-                                className="cursor-pointer rounded-md p-2 hover:bg-red-50"
+                                className="rounded-md p-2 hover:bg-red-50 cursor-pointer"
                                 title="Excluir"
                             >
-                                <Trash2 className="h-4 w-4 text-red-600" />
+                                <Trash2 className="h-5 w-5 text-red-600" />
                             </button>
                         )}
                     </div>
@@ -194,9 +237,18 @@ export default function UsersIndex() {
                                     type: 'link',
                                     href: route('admin.users.create'),
                                     label: 'Cadastro',
-                                    icon: <Plus className="h-4 w-4" />,
+                                    icon: <Plus className="h-5 w-5" />,
                                     className:
                                         'bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-[0_14px_30px_rgba(37,99,235,0.28)] border-0 hover:opacity-95',
+                                },
+                                {
+                                    permissions: ['users.manager', 'users.create'],
+                                    type: 'button',
+                                    onClick: () => setInvitationsModalOpen(true),
+                                    label: 'Convites',
+                                    icon: <UserPlus className="h-5 w-5" />,
+                                    className:
+                                        'bg-gradient-to-r from-green-700 to-green-600 text-white shadow-[0_14px_30px_rgba(37,99,235,0.28)] border-0 hover:opacity-95',
                                 },
                                 ...(emailVerificationEnabled
                                     ? [
@@ -207,7 +259,7 @@ export default function UsersIndex() {
                                                 setInviteOpen(true),
                                             label: 'Convidar',
                                             icon: (
-                                                <Mail className="h-4 w-4" />
+                                                <Mail className="h-5 w-5" />
                                             ),
                                             className:
                                                 'border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100',
@@ -220,15 +272,39 @@ export default function UsersIndex() {
                 </PageCard>
             </PageContainer>
 
+            {confirmOpen &&
+                <ConfirmModal
+                    open={confirmOpen}
+                    title="Excluir usuário"
+                    description="Esta ação não poderá ser desfeita. Deseja continuar?"
+                    confirmText="Excluir"
+                    onClose={closeDeleteModal}
+                    onConfirm={confirmDelete}
+                />
+            }
+            {confirmToggleVerifyOpen &&
+                <ConfirmModal
+                    open={confirmToggleVerifyOpen}
+                    title="Alterar Verificação de e-mail"
+                    description="Esta ação pode limitar o acesso ao sistema."
+                    confirmText="Mudar verificação"
+                    onClose={() => setConfirmToggleVerifyOpen(false)}
+                    onConfirm={confirmToggleVerifyEmail}
+                />
+            }
+            {selectedUser && <UserActionsModal
+                open={userOptionsModal}
+                onClose={() => setUserOptionsModal(false)}
+                user={selectedUser}
+            ></UserActionsModal>
 
-            <ConfirmModal
-                open={confirmOpen}
-                title="Excluir usuário"
-                description="Esta ação não poderá ser desfeita. Deseja continuar?"
-                confirmText="Excluir"
-                onClose={closeDeleteModal}
-                onConfirm={confirmDelete}
-            />
+            }
+            {invitationsModalOpen && <InvitationsModal
+                open={invitationsModalOpen}
+                onClose={() => setInvitationsModalOpen(false)}
+            ></InvitationsModal>
+            }
+
         </>
     );
 }

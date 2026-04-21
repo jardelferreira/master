@@ -10,6 +10,7 @@ export type BaseNavItem = {
     canAny?: string[];
     canAll?: string[];
     active?: string | string[] | ((ctx: any) => boolean);
+    onClick?: () => void;
 };
 
 export type NavLink = BaseNavItem & {

@@ -37,7 +37,22 @@ class UserInvitation extends Model
             && $this->expires_at->isFuture();
     }
 
-    public function getRoutekeyName(){
+
+    public function getStatusAttribute(): string
+    {
+        if ($this->accepted_at) {
+            return 'accepted';
+        }
+
+        if ($this->expires_at->isPast()) {
+            return 'expired';
+        }
+
+        return 'pending';
+    }
+
+    public function getRoutekeyName()
+    {
         return "uuid";
     }
 }

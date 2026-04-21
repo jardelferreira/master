@@ -12,7 +12,7 @@ class StoreSectorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,9 @@ class StoreSectorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => "required|min:3|max:100|unique:sectors,name.{$this->id},id",
+            'description' => 'nullable',
+            'project_id' => "required|exists:projects,id"
         ];
     }
 }

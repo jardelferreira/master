@@ -36,7 +36,7 @@ class UserStoreRequest extends FormRequest
     {
         return $this->merge([
             'uuid' => Str::uuid(),
-            'active' => true,
+            'active' => $this->active || true,
         ]);
     }
     

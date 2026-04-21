@@ -1,8 +1,12 @@
-import { Home, UserLock, WaypointsIcon, User, FolderGit2, FileBox, FileText } from 'lucide-react';
-import { NavigationItem } from './SidebarDashboard';
+import { Home, UserLock, WaypointsIcon, User, FolderGit2, FileBox, FileText, PlusCircle } from 'lucide-react';
+import { NavigationItem, NavLink } from './SidebarDashboard';
 
 
-export function buildNavigation(projects: any[]): NavigationItem[] {
+export function buildNavigation(
+    projects: any[],
+    onCreateProject?: () => void
+): NavigationItem[] {
+
     return [
         {
             type: 'link',
@@ -34,15 +38,26 @@ export function buildNavigation(projects: any[]): NavigationItem[] {
             href: '#',
             icon: WaypointsIcon,
             active: 'admin.projects.show',
-            children: projects.map((project) => ({
-                type: 'link',
-                label: project.name,
-                href: route('admin.projects.show', project.id),
-                icon: FolderGit2,
-                active: ({ name, params }: any) =>
-                    name === 'admin.projects.show' &&
-                    String(params.id) === String(project.id),
-            })),
+            children: [
+                {
+                    type: 'link',
+                    label: 'NOVO PROJETO',
+                    href: '?modal=create',
+                    onClick: onCreateProject,
+                    icon: PlusCircle,
+                    permission: 'permissions.view',
+                    active: 'admin.projects',
+                },
+                ...projects.map<NavLink>((project) => ({
+                    type: 'link',
+                    label: project.name,
+                    href: route('admin.projects.show', project.id),
+                    icon: FolderGit2,
+                    active: ({ name, params }: any) =>
+                        name === 'admin.projects.show' &&
+                        String(params.id) === String(project.id),
+                })),
+            ]
         },
         {
             type: 'group',

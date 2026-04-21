@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\Sector;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -31,17 +35,24 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        Project::create($request->all());
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Projeto criado com sucesso',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Project $id)
+    public function show(Project $project)
     {
+        
         return Inertia::render('dashboard/projects/Show', [
-            'project' => $id,
-
+            'project' => $project->load(['sectors', 'users']),
+            'users' => User::select('id', 'name')->get(),
             'metrics' => [
                 'total_products' => 128,
                 'total_stock' => 3480,
@@ -113,9 +124,25 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, Project $project)
+    public function update(Request $request, Project $project)
     {
-        //
+        $data = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('projects', 'name')->ignore($project),
+            ],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $project->update($data);
+
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Projeto atualizado com sucesso',
+            'type' => 'toast',
+            'id' => \Illuminate\Support\Str::uuid(),
+        ]);
     }
 
     /**
@@ -123,6 +150,47 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+
+        return redirect()->route('dashboard')->with('feedback', [
+            'status' => 'success',
+            'message' => 'Projeto excluído com sucesso',
+            'type' => 'toast',
+            'id' => \Illuminate\Support\Str::uuid(),
+        ]);
+    }
+
+    public function syncUsers(Request $request, Project $project)
+    {
+        $data = $request->validate([
+            'users' => ['array'],
+            'users.*' => ['exists:users,id'],
+        ]);
+
+        $project->users()->sync($data['users'] ?? []);
+
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Usuários do projeto atualizados',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+
+    public function createSector(Project $project, Request $request)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
+
+        $project->sectors()->create($data);
+
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Setor criado com sucesso',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
     }
 }
