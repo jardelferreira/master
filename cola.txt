@@ -1,0 +1,6 @@
+Comandos Postgress:
+\l          -- listar bancos
+\c laravel  -- conectar no banco
+\dt         -- listar tabelas
+\d tabela   -- estrutura da tabela
+\dn         -- listar schemas
