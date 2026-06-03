@@ -3,11 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enum\InvoiceMovementEnum;
-use App\Enum\InvoiceStatusEnum;
 use App\Models\InvoiceItemMovement;
 use App\Models\Stock;
 use App\Models\StockMovement;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -20,7 +18,7 @@ class StockMovementSeeder extends Seeder
     {
         // 🔥 pega apenas movimentos aprovados
         $movements = InvoiceItemMovement::with(['invoiceItem.invoice'])
-            ->where('type', InvoiceMovementEnum::APPROVED->value)
+            ->where('type', InvoiceMovementEnum::COMPLETED->value)
             ->get();
 
         foreach ($movements as $movement) {
@@ -31,7 +29,7 @@ class StockMovementSeeder extends Seeder
             // 🔍 verifica se já existe estoque para esse item
             $stock = Stock::where('invoice_item_id', $item->id)->first();
 
-            if (!$stock) {
+            if (! $stock) {
                 // 📦 cria estoque
                 $stock = Stock::create([
                     'uuid' => Str::uuid(),

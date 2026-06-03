@@ -2,39 +2,44 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Product;
+use App\Models\Project;
 use App\Models\StockMinimal;
+use Illuminate\Database\Seeder;
 
 class StockMinimalSeeder extends Seeder
 {
     public function run(): void
     {
-        $products = Product::pluck('id');
+        $projects = Project::all();
 
-        foreach ($products as $productId) {
+        foreach ($projects as $project) {
+            # code...
+            $sectors = $project?->sectors ?? collect();
+            $products = Product::all();
 
-            // regra global
-            StockMinimal::factory()->create([
-                'product_id' => $productId,
-            ]);
+            foreach ($products as $product) {
 
-            // regra por projeto (opcional)
-            if (rand(0, 1)) {
-                StockMinimal::factory()
-                    ->forProject()
-                    ->create([
-                        'product_id' => $productId,
+                // Regra global (sem projeto, sem setor)
+                StockMinimal::factory()->create([
+                    'product_id' => $product->id,
+                    'project_id' => null,
+                    'sector_id' => null,
+                ]);
+
+                // Regra por projeto (projeto 1)
+                if ($project) {
+                    StockMinimal::factory()->forProject($project)->create([
+                        'product_id' => $product->id,
                     ]);
-            }
+                }
 
-            // regra por setor (opcional)
-            if (rand(0, 1)) {
-                StockMinimal::factory()
-                    ->forSector()
-                    ->create([
-                        'product_id' => $productId,
+                // Regras por setor (setores do projeto 1)
+                foreach ($sectors as $sector) {
+                    StockMinimal::factory()->forSector($sector)->create([
+                        'product_id' => $product->id,
                     ]);
+                }
             }
         }
     }

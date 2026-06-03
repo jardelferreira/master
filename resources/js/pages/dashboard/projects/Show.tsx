@@ -1,7 +1,7 @@
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import Card from "@/pages/components/projects/Card";
 import DashboardLayout from "@/pages/layouts/dashboard/DashboardLayout";
-import { Package, Layers, DollarSign, AlertTriangle, CirclePlus, User2, FileBox } from "lucide-react";
+import { Package, Layers, DollarSign, AlertTriangle, CirclePlus, User2, FileBox, Box } from "lucide-react";
 import { StockSection } from "@/pages/components/projects/StockSectionList";
 import { stockMock } from "@/mocks/stockMock";
 import { useState } from "react";
@@ -10,11 +10,20 @@ import CreateSectorModal from "@/pages/components/sectors/CreateSectorModal";
 import { SimpleUser } from "@/types/user";
 import ProjectManageModal from "@/pages/components/projects/ProjectManageModal";
 import { Sector } from "@/pages/components/projects/ProjectSectorsModal";
+import { formatCurrency, formatQuantity } from "@/utils/formatValues";
+import { StockMovementSection } from "@/pages/components/projects/StockMovementSection";
+import { Movement } from "@/types/movement";
 
 type Props = {
-    project: { name: string, id: number, description: string, initials:string, sectors: any[],users: SimpleUser[] };
+    project: { name: string, id: number, description: string, initials:string, sectors: any[],users: SimpleUser[],invoices: any[]};
     users: SimpleUser[];
     sectors: Sector[];
+    movements: Movement[];
+    sumary: {
+        total_quantity: number;
+        total_products: number;
+        total_value: number;
+    };
     metrics: {
         total_products: number;
         total_stock: number;
@@ -26,7 +35,7 @@ type Props = {
 
 export default function ProjectDashboard() {
     const { props } = usePage<Props>();
-    const { project, metrics, users,sectors } = props;
+    const { project, metrics, users,sectors, sumary, movements } = props;
     const [createOpen, setCreateOpen] = useState(true)
     const [createModalOpen, setCreateModalOpen] = useState(false)
     const [managerModalOpen, setManagerModalOpen] = useState(false)
@@ -112,6 +121,18 @@ export default function ProjectDashboard() {
                 <CirclePlus />
                 Novo Setor
             </button>
+            <Link
+            href={route('admin.projects.stock',project)}
+                className="
+                    px-4 py-2 text-sm rounded-xl cursor-pointer
+                    bg-yellow-600 text-white hover:bg-blue-700
+                    font-medium transition
+                    inline-flex items-center gap-2
+                "
+            >
+                <Box />
+                Estoque
+            </Link>
 
         </div>
     </div>
@@ -121,19 +142,19 @@ export default function ProjectDashboard() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     <Card
                         title="Estoque total"
-                        value={metrics.total_stock}
+                        value={formatQuantity(sumary.total_quantity,1)}
                         icon={<Package size={16} />}
                         variant="primary"
                     />
                     <Card
                         title="Produtos"
-                        value={metrics.total_products}
+                        value={sumary.total_products}
                         icon={<Layers size={16} />}
                         variant="default"
                     />
                     <Card
                         title="Custo total"
-                        value={`R$ ${metrics.total_cost.toLocaleString("pt-BR")}`}
+                        value={formatCurrency(sumary.total_value)}
                         icon={<DollarSign size={16} />}
                         variant="default"
                     />
@@ -157,7 +178,7 @@ export default function ProjectDashboard() {
                     />
                     <Card
                         title="Notas"
-                        value={59}
+                        value={project.invoices.length}
                         icon={<FileBox size={16} />}
                         variant="danger"
                     />
@@ -170,7 +191,10 @@ export default function ProjectDashboard() {
                 </div>
 
                 {/* ── STOCK ── */}
-                <StockSection stock={stockMock} sectorsReal={project.sectors} />
+                {/* <StockSection stock={stockMock} sectorsReal={project.sectors} /> */}
+                <StockMovementSection
+                movements={movements}
+                ></StockMovementSection>
                 {modal === 'create' &&
                     <CreateProjectModal open={createOpen} onClose={() => setCreateOpen(false)}></CreateProjectModal>
                 }

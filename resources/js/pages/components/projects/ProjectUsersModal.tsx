@@ -49,7 +49,6 @@ export default function ProjectUsersModal({
     // 🔍 filtro
     const filteredUsers = useMemo(() => {
         const query = search.toLowerCase();
-
         return users.filter(
             (u) =>
                 u.name.toLowerCase().includes(query) ||

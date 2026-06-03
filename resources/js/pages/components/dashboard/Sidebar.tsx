@@ -9,6 +9,7 @@ import { isActive } from '@/utils/navigationControls';
 
 import { Menu } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
+import { NavNode } from './sidebar/NavNode';
 
 type SidebarProps = {
     navigation: NavigationItem[];
@@ -40,35 +41,14 @@ export function Sidebar({ navigation }: SidebarProps) {
             </div>
 
             <nav className="mt-4 space-y-1 px-2">
-                {navigation.map((item, index) => {
-                    if (item.type === 'link') {
-                        if (!canShow(item)) return null;
-
-                        return (
-                            <NavItem
-                                key={`${index}-${item.href}`}
-                                collapsed={collapsed}
-                                label={item.label}
-                                icon={item.icon}
-                                href={item.href}
-                                active={isActive(item.active)}
-                            />
-                        );
-                    }
-
-                    // group
-                    const visibleChildren = item.children.filter(canShow);
-                    if (visibleChildren.length === 0) return null;
-
-                    return (
-                        <NavGroup
-                            key={`${index}-${item.label}`}
-                            group={{ ...item, children: visibleChildren }}
-                            collapsed={collapsed}
-                            canShow={canShow}
-                        />
-                    );
-                })}
+                {navigation.map((item, index) => (
+                    <NavNode
+                        key={`${index}-${item.label}`}
+                        item={item}
+                        collapsed={collapsed}
+                        canShow={canShow}
+                    />
+                ))}
             </nav>
         </aside>
     );

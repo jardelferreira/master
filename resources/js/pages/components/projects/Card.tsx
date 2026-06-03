@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { MoreVertical, PlusCircle } from "lucide-react";
+import { Link } from "@inertiajs/react";
 
 type CardProps = {
     title: string;
@@ -109,9 +110,10 @@ export default function Card({
 
             {open && (
                 <div className="absolute right-0 mt-1.5 w-44 bg-white rounded-xl shadow-lg border border-slate-100 z-50 overflow-hidden">
-                    <button className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 transition">
-                        Ver detalhes
-                    </button>
+                    <Link href={route('admin.invoices.index')}
+                    className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 transition">
+                        Painel de Notas
+                    </Link>
                     <button className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 transition">
                         Nova ação
                     </button>

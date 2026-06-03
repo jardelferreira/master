@@ -2,19 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\InvoiceItem;
-use App\Models\Product;
-use App\Models\Project;
-use App\Models\Sector;
-use App\Models\Stock;
-use App\Models\User;
+use Database\Factories\StockMovementFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class StockMovement extends Model
 {
-    /** @use HasFactory<\Database\Factories\StockMovementFactory> */
+    /** @use HasFactory<StockMovementFactory> */
     use HasFactory;
 
     protected $table = 'stock_movements';
@@ -71,6 +66,21 @@ class StockMovement extends Model
     | Relationships
     |--------------------------------------------------------------------------
     */
+
+    public static function getStockMovementsPreview(int $projectId, int $limit = 100)
+    {
+        return StockMovement::query()
+            ->with([
+                'product:id,name,unit',
+                'sector:id,name',
+                'project:id,name',
+                'user:id,name',
+            ])
+            ->where('project_id', $projectId)
+            ->latest('performed_at')
+            ->limit($limit)
+            ->get();
+    }
 
     public function stock()
     {
@@ -161,12 +171,12 @@ class StockMovement extends Model
 
     public function isTransfer(): bool
     {
-        return !is_null($this->source_stock_id) && !is_null($this->destination_stock_id);
+        return ! is_null($this->source_stock_id) && ! is_null($this->destination_stock_id);
     }
 
     public function isUserTransfer(): bool
     {
-        return !is_null($this->destination_user_id);
+        return ! is_null($this->destination_user_id);
     }
 
     /*
@@ -178,11 +188,11 @@ class StockMovement extends Model
     public function getSummaryAttribute(): string
     {
         return match (true) {
-            $this->isTransfer() => "Transferência de estoque",
-            $this->isUserTransfer() => "Movimentação para usuário",
-            $this->isIn() => "Entrada no estoque",
-            $this->isOut() => "Saída do estoque",
-            default => "Movimento desconhecido"
+            $this->isTransfer() => 'Transferência de estoque',
+            $this->isUserTransfer() => 'Movimentação para usuário',
+            $this->isIn() => 'Entrada no estoque',
+            $this->isOut() => 'Saída do estoque',
+            default => 'Movimento desconhecido'
         };
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProviderRequest;
 use App\Http\Requests\UpdateProviderRequest;
+use App\Http\Resources\ProviderShowResource;
 use App\Models\Provider;
+use Inertia\Inertia;
 
 class ProviderController extends Controller
 {
@@ -14,7 +16,9 @@ class ProviderController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('dashboard/providers/Index', [
+            'providers' => Provider::all()
+        ]);
     }
 
     /**
@@ -22,7 +26,7 @@ class ProviderController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('dashboard/providers/Create');
     }
 
     /**
@@ -30,7 +34,14 @@ class ProviderController extends Controller
      */
     public function store(StoreProviderRequest $request)
     {
-        //
+        Provider::create($request->all());
+
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Fornecedor cadastrado com sucesso',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
     }
 
     /**
@@ -38,7 +49,10 @@ class ProviderController extends Controller
      */
     public function show(Provider $provider)
     {
-        //
+        return Inertia::render(
+            'dashboard/providers/Show',
+            (new ProviderShowResource($provider))->toArray(request())
+        );
     }
 
     /**
@@ -54,7 +68,13 @@ class ProviderController extends Controller
      */
     public function update(UpdateProviderRequest $request, Provider $provider)
     {
-        //
+        $provider->update($request->all());
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Fornecedor Atualizado com sucesso.',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
     }
 
     /**
@@ -62,6 +82,23 @@ class ProviderController extends Controller
      */
     public function destroy(Provider $provider)
     {
-        //
+        $provider->delete();
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Fornecedor deleteado',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
+    }
+
+    public function toggleStatus(Provider $provider)
+    {
+        $provider->update(['active' => !$provider->active,]);
+        return back()->with('feedback', [
+            'status' => 'success',
+            'message' => 'Atualização bem sucedida!',
+            'type' => 'toast',
+            'id' => uniqid(),
+        ]);
     }
 }

@@ -38,16 +38,16 @@ class InvoiceItemFactory extends Factory
             'ca_number' => $this->faker->optional()->numerify('CA-#####'),
 
             'quantity' => $quantity,
+            'quantity_available' => $quantity,
             'unit_price' => $unitPrice,
-            'total' => round($quantity * $unitPrice, 2),
+            'total' => round(($quantity * $unitPrice) - 0 + 0, 2),
 
-            'unit' => $product->unit,
+            'unit' => $product->unit->value,
 
             'discount' => 0,
             'tax' => 0,
 
             'delivery_status' => InvoiceItemDeliveryStatusEnum::PENDING->value,
-
             'meta' => [
                 'seeded' => true,
             ],
@@ -62,15 +62,29 @@ class InvoiceItemFactory extends Factory
 
     public function partialDelivered(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn() => [
             'delivery_status' => InvoiceItemDeliveryStatusEnum::PARTIALLY_DELIVERED->value,
         ]);
     }
 
     public function delivered(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn() => [
             'delivery_status' => InvoiceItemDeliveryStatusEnum::DELIVERED->value,
+        ]);
+    }
+
+    public function approved(): static
+    {
+        return $this->state(fn() => [
+            'quantity_available' => 0,
+        ]);
+    }
+
+    public function pendingApproval(): static
+    {
+        return $this->state(fn() => [
+            'quantity_available' => $this->faker->randomFloat(2, 1, 50),
         ]);
     }
 }

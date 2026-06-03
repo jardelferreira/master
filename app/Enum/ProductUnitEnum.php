@@ -20,6 +20,7 @@ enum ProductUnitEnum: string
 
     case L = 'l';
     case ML = 'ml';
+    case MTL = 'mtl';
 
     case PAIR = 'par';
     case DOZEN = 'dz';
@@ -40,6 +41,7 @@ enum ProductUnitEnum: string
             self::CM     => 'Centímetro',
             self::L      => 'Litro',
             self::ML     => 'Mililitro',
+            self::MTL     => 'Metro linear',
             self::PAIR   => 'Par',
             self::DOZEN  => 'Dúzia',
             self::PACK   => 'Pacote',

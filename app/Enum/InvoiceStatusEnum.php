@@ -44,19 +44,19 @@ enum InvoiceStatusEnum: string
             self::OBSERVATION => 'Observação',
             self::RETURNED => 'Retornada',
             self::CANCELLED => 'Cancelada',
-            self::COMPLETED => 'Realizada',
+            self::COMPLETED => 'Finalizada',
         };
     }
 
     public function color(): string
     {
         return match ($this) {
-            self::ISSUED      => 'bg-gray-500/20 text-gray-300',
-            self::PAID        => 'bg-blue-500/20 text-blue-300',
-            self::OBSERVATION => 'bg-purple-500/20 text-purple-300',
-            self::RETURNED    => 'bg-orange-500/20 text-orange-300',
-            self::CANCELLED   => 'bg-red-500/20 text-red-300',
-            self::COMPLETED   => 'bg-emerald-500/20 text-emerald-300',
+            self::ISSUED => 'bg-slate-100 text-slate-600',
+            self::PAID => 'bg-blue-100 text-blue-600',
+            self::OBSERVATION => 'bg-purple-100 text-purple-600',
+            self::RETURNED => 'bg-orange-100 text-orange-600',
+            self::CANCELLED => 'bg-red-100 text-red-600',
+            self::COMPLETED => 'bg-emerald-100 text-emerald-600',
         };
     }
 }

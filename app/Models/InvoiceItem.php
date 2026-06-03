@@ -3,17 +3,16 @@
 namespace App\Models;
 
 use App\Enum\InvoiceItemDeliveryStatusEnum;
-use App\Enum\InvoiceMovementEnum;
+use App\Enum\InvoiceItemMovementEnum;
 use App\Enum\ProductUnitEnum;
-use App\Models\InvoiceItemMovement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-
 class InvoiceItem extends Model
 {
     use HasFactory;
+
     /*
 $invoice->items()->create([
     'product_id' => $product->id,
@@ -43,6 +42,7 @@ $invoice->items()->create([
         'description',
         'ca_number',
         'quantity',
+        'quantity_available',
         'unit_price',
         'total',
         'unit',
@@ -55,6 +55,7 @@ $invoice->items()->create([
 
     protected $casts = [
         'quantity' => 'decimal:3',
+        'quantity_available' => 'decimal:3',
         'unit_price' => 'decimal:2',
         'total' => 'decimal:2',
         'discount' => 'decimal:2',
@@ -62,7 +63,7 @@ $invoice->items()->create([
         'meta' => 'array',
 
         'delivery_status' => InvoiceItemDeliveryStatusEnum::class,
-        'unit' => ProductUnitEnum::class
+        'unit' => ProductUnitEnum::class,
     ];
 
     protected static function booted()
@@ -73,20 +74,34 @@ $invoice->items()->create([
                 $item->uuid = (string) Str::uuid();
             }
 
-            // cálculo automático do total
             if (empty($item->total)) {
                 $item->total = ($item->quantity * $item->unit_price)
                     - $item->discount
                     + $item->tax;
             }
 
-            // snapshot automático (se vier product)
             if ($item->product && empty($item->product_name)) {
                 $item->product_name = $item->product->name;
             }
 
             if ($item->provider && empty($item->provider_name)) {
                 $item->provider_name = $item->provider->name;
+            }
+
+            // 🔥 CORREÇÃO CRÍTICA
+            if (is_null($item->quantity_available)) {
+                $item->quantity_available = $item->quantity;
+            }
+        });
+
+        static::saving(function ($item) {
+
+            if ($item->quantity_available < 0) {
+                throw new \Exception('quantity_available não pode ser negativo');
+            }
+
+            if ($item->quantity_available > $item->quantity) {
+                throw new \Exception('quantity_available inválido');
             }
         });
     }
@@ -126,6 +141,10 @@ $invoice->items()->create([
     {
         return $this->hasOne(Stock::class);
     }
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class);
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -135,22 +154,22 @@ $invoice->items()->create([
 
     public function isDelivered(): bool
     {
-        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::DELIVERED->value;
+        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::DELIVERED;
     }
 
     public function isPending(): bool
     {
-        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::PENDING->value;
+        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::PENDING;
     }
 
     public function isCancelled(): bool
     {
-        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::CANCELLED->value;
+        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::FAILED;
     }
 
     public function isPartial(): bool
     {
-        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::PARTIAL->value;
+        return $this->delivery_status === InvoiceItemDeliveryStatusEnum::PARTIALLY_DELIVERED;
     }
 
     public function calculateTotal(): void
@@ -169,51 +188,47 @@ $invoice->items()->create([
     public function getApprovedQuantityAttribute()
     {
         return $this->movements()
-            ->where('type', InvoiceMovementEnum::APPROVED->value)
+            ->where('type', InvoiceItemMovementEnum::APPROVED->value)
             ->sum('quantity');
     }
 
     public function getReceivedQuantityAttribute()
     {
         return $this->movements()
-            ->where('type', InvoiceMovementEnum::RECEIVED->value)
+            ->where('type', InvoiceItemMovementEnum::RECEIVED->value)
             ->sum('quantity');
     }
 
     public function getRejectedQuantityAttribute()
     {
         return $this->movements()
-            ->where('type', InvoiceMovementEnum::REJECTED->value)
+            ->where('type', InvoiceItemMovementEnum::REJECTED->value)
             ->sum('quantity');
-            
     }
 
     public function getReturnedQuantityAttribute()
     {
         return $this->movements()
-            ->where('type', InvoiceMovementEnum::RETURNED->value)
+            ->where('type', InvoiceItemMovementEnum::RETURNED->value)
             ->sum('quantity');
-            
     }
 
     public function getAjustedQuantityAttribute()
     {
         return $this->movements()
-            ->where('type', InvoiceMovementEnum::ADJUSTED->value)
+            ->where('type', InvoiceItemMovementEnum::ADJUSTED->value)
             ->sum('quantity');
-            
     }
 
     public function getInspectedQuantityAttribute()
     {
         return $this->movements()
-            ->where('type', InvoiceMovementEnum::INSPECTED->value)
+            ->where('type', InvoiceItemMovementEnum::INSPECTED->value)
             ->sum('quantity');
-            
     }
 
     public function canEnterStock(): bool
     {
-        return $this->approved_quantity > 0;
+        return $this->quantity_available > 0;
     }
 }

@@ -129,7 +129,7 @@ export default function UsersIndex() {
             cell: ({ row, getValue }) => {
                 const user = row.original;
                 const value = getValue<boolean>();
-
+                
                 if (!can('users.update')) {
                     return value ? (
                         <p className="text-green-500 font-bold">Ativo</p>

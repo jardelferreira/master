@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\InvoiceItemDeliveryStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->string('ca_number')->nullable();
 
             $table->decimal('quantity', 10, 2);
+            $table->decimal('quantity_available', 10, 2); // representa o saldo do item disponível
             $table->decimal('unit_price', 12, 2);
             $table->decimal('total', 12, 2);
 
@@ -35,7 +37,7 @@ return new class extends Migration
             $table->decimal('discount', 12, 2)->default(0);
             $table->decimal('tax', 12, 2)->default(0);
 
-            $table->string('delivery_status')->default('pending')->index();
+            $table->string('delivery_status')->default(InvoiceItemDeliveryStatusEnum::PENDING->value)->index();
 
             $table->json('meta')->nullable();
 

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Enum\InvoiceMovementEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class InvoiceMovement extends Model
@@ -35,6 +37,7 @@ class InvoiceMovement extends Model
     protected $casts = [
         'performed_at' => 'datetime',
         'meta' => 'array',
+        'type' => InvoiceMovementEnum::class,
     ];
 
     /*
@@ -71,6 +74,9 @@ class InvoiceMovement extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function item(): BelongsTo {
+        return $this->belongsTo(InvoiceItem::class);
+    }
     /*
     |--------------------------------------------------------------------------
     | Scopes

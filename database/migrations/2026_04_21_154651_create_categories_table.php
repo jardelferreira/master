@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('slug')->unique();
             // hierarquia
             $table->foreignId('parent_id')->nullable()->constrained('categories')->nullOnDelete();
@@ -23,7 +23,10 @@ return new class extends Migration
             $table->json('meta')->nullable();
             $table->timestamps();
             $table->softDeletes();
+        
             $table->index(['name']);
+            $table->unique(['parent_id', 'name']);
+        
         });
     }
 

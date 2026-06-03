@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\StockMinimalFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class StockMinimal extends Model
 {
-    /** @use HasFactory<\Database\Factories\StockMinimalFactory> */
+    /** @use HasFactory<StockMinimalFactory> */
     use HasFactory;
+
     protected $fillable = [
         'uuid',
         'product_id',
@@ -23,10 +26,10 @@ class StockMinimal extends Model
         'meta' => 'array',
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::creating(function ($model) {
-            if (!$model->uuid) {
+        static::creating(function (Model $model) {
+            if (! $model->uuid) {
                 $model->uuid = (string) Str::uuid();
             }
         });
@@ -38,17 +41,17 @@ class StockMinimal extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
-    public function sector()
+    public function sector(): BelongsTo
     {
         return $this->belongsTo(Sector::class);
     }
@@ -61,6 +64,16 @@ class StockMinimal extends Model
 
     public function isGlobal(): bool
     {
-        return !$this->project_id && !$this->sector_id;
+        return is_null($this->project_id) && is_null($this->sector_id);
+    }
+
+    public function isForProject(): bool
+    {
+        return ! is_null($this->project_id) && is_null($this->sector_id);
+    }
+
+    public function isForSector(): bool
+    {
+        return ! is_null($this->sector_id);
     }
 }

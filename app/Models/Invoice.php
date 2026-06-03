@@ -59,17 +59,19 @@ class Invoice extends Model
         'status' => InvoiceStatusEnum::class,
     ];
 
-
     protected static function booted()
     {
         static::creating(function ($invoice) {
 
+            $provider = Provider::find($invoice->provider_id);
             if (empty($invoice->uuid)) {
                 $invoice->uuid = (string) Str::uuid();
             }
 
             if (empty($invoice->slug)) {
-                $invoice->slug = Str::upper(Str::slug("{$invoice->type}-{$invoice->number}-{$invoice->provider->trade_name}"));
+                $invoice->slug = Str::upper(
+                    Str::slug("{$invoice->type->value}-{$invoice->number}-{$provider?->trade_name}")
+                );
             }
         });
     }
@@ -107,7 +109,7 @@ class Invoice extends Model
 
     public function movements()
     {
-        return $this->hasMany(InvoiceMovement::class);
+        return $this->hasMany(InvoiceMovement::class)->latest();
     }
 
     /*
@@ -117,16 +119,16 @@ class Invoice extends Model
     */
 
     /**
-     * @param Builder<self> $query
+     * @param  Builder<self>  $query
      */
     public function scopeApproved(Builder $query)
     {
-        return $query->where('status', InvoiceStatusEnum::APPROVED->value);
+        return $query->where('status', InvoiceStatusEnum::COMPLETED->value);
     }
 
     public function scopePaid(Builder $query)
     {
-        return $query->where('status', InvoiceStatusEnum::PAY->value);
+        return $query->where('status', InvoiceStatusEnum::PAID->value);
     }
 
     public function scopeCancelled(Builder $query)
@@ -138,7 +140,6 @@ class Invoice extends Model
     {
         return $query->where('status', InvoiceStatusEnum::RETURNED->value);
     }
-
 
     // public function isApproved(): bool
     // {
@@ -155,22 +156,27 @@ class Invoice extends Model
 
     public function isApproved(): bool
     {
-        return $this->status === InvoiceStatusEnum::APPROVED->value;
+        return $this->status === InvoiceStatusEnum::COMPLETED->value;
     }
 
     public function isPaid(): bool
     {
-        return !is_null($this->paid_at) || $this->status === InvoiceStatusEnum::PAY->value;
+        return ! is_null($this->paid_at) || $this->status === InvoiceStatusEnum::PAID->value;
     }
 
     public function isCancelled(): bool
     {
-        return !is_null($this->cancelled_at) || $this->status === InvoiceStatusEnum::CANCELLED->value;
+        return ! is_null($this->cancelled_at) || $this->status === InvoiceStatusEnum::CANCELLED->value;
     }
 
     public function isReturned(): bool
     {
         return $this->status === InvoiceStatusEnum::RETURNED->value;
+    }
+
+    public function label(): string
+    {
+        return $this->status->label();
     }
 
     /*

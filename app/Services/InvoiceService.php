@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Enum\InvoiceMovementEnum;
+use App\Enum\InvoiceStatusEnum;
 use App\Models\Invoice;
 use App\Models\InvoiceMovement;
-use App\Enum\InvoiceStatusEnum;
-use App\Enum\InvoiceMovementEnum;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -59,6 +60,7 @@ class InvoiceService
                 'meta' => $data['meta'] ?? [],
             ]);
 
+            $movementService = app(InvoiceMovementService::class);
             // registra movimento inicial
             InvoiceMovement::create([
                 'uuid' => Str::uuid(),
@@ -70,6 +72,12 @@ class InvoiceService
                     'auto' => true,
                 ],
             ]);
+            if ($data['status'] == 'completed') {
+                // registra movimento inicial
+                $movementService->markAsPaid($invoice, $userId);
+                $invoice->refresh();
+                $movementService->complete($invoice, $userId);
+            }
 
             return $invoice;
         });
@@ -88,7 +96,7 @@ class InvoiceService
 
     public function isEditable(Invoice $invoice): bool
     {
-        return !InvoiceStatusEnum::from($invoice->status)->isFinal();
+        return ! InvoiceStatusEnum::from($invoice->status)->isFinal();
     }
 
     /*
@@ -99,7 +107,7 @@ class InvoiceService
 
     public function ensureEditable(Invoice $invoice): void
     {
-        if (!$this->isEditable($invoice)) {
+        if (! $this->isEditable($invoice)) {
             throw new \Exception('Nota não pode mais ser editada.');
         }
     }

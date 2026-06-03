@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Enum\InvoiceMovementEnum;
 use App\Models\Invoice;
 use App\Models\InvoiceMovement;
-use App\Enum\InvoiceMovementEnum;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Exception;
 
 class InvoiceMovementService
 {
@@ -19,7 +19,7 @@ class InvoiceMovementService
     public function changeStatus(
         Invoice $invoice,
         InvoiceMovementEnum $to,
-        int $userId ,
+        int $userId,
         ?array $meta = []
     ): Invoice {
 
@@ -30,6 +30,8 @@ class InvoiceMovementService
             // 🔒 valida transição
             $this->validateTransition($from, $to);
 
+            // 🔒 aqui ninguém mais consegue alterar até terminar
+            $invoice = Invoice::lockForUpdate()->find($invoice->id);
             // 📊 registra movimento
             InvoiceMovement::create([
                 'uuid' => Str::uuid(),
@@ -40,12 +42,9 @@ class InvoiceMovementService
                 'meta' => $meta,
             ]);
 
-            $invoice = Invoice::lockForUpdate()->find($invoice->id);
-            // 🔒 aqui ninguém mais consegue alterar até terminar
-
             // 🔄 atualiza status atual
             $invoice->update([
-                'status' => $to->value
+                'status' => $to->value,
             ]);
 
             return $invoice;
@@ -74,6 +73,7 @@ class InvoiceMovementService
                 InvoiceMovementEnum::COMPLETED,
                 InvoiceMovementEnum::OBSERVATION,
                 InvoiceMovementEnum::RETURNED,
+                InvoiceMovementEnum::CANCELLED,
             ],
 
             InvoiceMovementEnum::OBSERVATION => [
@@ -96,7 +96,7 @@ class InvoiceMovementService
 
         };
 
-        if (!in_array($to, $allowed)) {
+        if (! in_array($to, $allowed)) {
             throw new Exception("Transição inválida: {$from->value} → {$to->value}");
         }
     }
@@ -107,7 +107,7 @@ class InvoiceMovementService
     |--------------------------------------------------------------------------
     */
 
-    public function markAsPaid(Invoice $invoice, ?int $userId = null): Invoice
+    public function markAsPaid(Invoice $invoice, int $userId): Invoice
     {
         return $this->changeStatus(
             $invoice,
@@ -116,7 +116,7 @@ class InvoiceMovementService
         );
     }
 
-    public function complete(Invoice $invoice, ?int $userId = null): Invoice
+    public function complete(Invoice $invoice, int $userId): Invoice
     {
         return $this->changeStatus(
             $invoice,
@@ -125,7 +125,7 @@ class InvoiceMovementService
         );
     }
 
-    public function cancel(Invoice $invoice, ?int $userId = null): Invoice
+    public function cancel(Invoice $invoice, int $userId): Invoice
     {
         return $this->changeStatus(
             $invoice,
@@ -134,7 +134,7 @@ class InvoiceMovementService
         );
     }
 
-    public function returnToProvider(Invoice $invoice, ?int $userId = null): Invoice
+    public function returnToProvider(Invoice $invoice, int $userId): Invoice
     {
         return $this->changeStatus(
             $invoice,
@@ -145,7 +145,7 @@ class InvoiceMovementService
 
     public function markAsObservation(
         Invoice $invoice,
-        ?int $userId = null,
+        int $userId,
         ?string $reason = null
     ): Invoice {
         return $this->changeStatus(

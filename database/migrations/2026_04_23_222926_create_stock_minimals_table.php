@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('stock_minimals', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
-            $table->foreignId('product_id')->constrained()->restrictOnDelete();
-            $table->foreignId('project_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('sector_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('sector_id')->nullable()->constrained()->cascadeOnDelete();
             $table->decimal('min_quantity', 14, 3);
             $table->json('meta')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['product_id', 'project_id', 'sector_id']);
         });
     }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['uuid','name','description','project_id','slug'])]
 #[ObservedBy(SectorObserver::class)]
@@ -19,6 +20,11 @@ class Sector extends Model
     public function project():BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function stocks(): HasMany
+    {
+        return $this->hasMany(Stock::class);
     }
 
 }

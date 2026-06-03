@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use App\Enum\InvoiceItemMovementReasonEnum;
 use App\Enum\InvoiceItemMovementEnum;
-use App\Models\InvoiceItem;
-use App\Models\Stock;
-use App\Models\User;
+use App\Enum\InvoiceItemMovementReasonEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -38,7 +35,7 @@ class InvoiceItemMovement extends Model
         'requires_inspection' => 'boolean',
         'is_approved' => 'boolean',
         'reason' => InvoiceItemMovementReasonEnum::class,
-        'type' => InvoiceItemMovementEnum::class
+        'type' => InvoiceItemMovementEnum::class,
     ];
 
     protected static function booted()
@@ -76,6 +73,15 @@ class InvoiceItemMovement extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function item()
+    {
+        return $this->belongsTo(InvoiceItem::class, 'invoice_item_id');
+    }
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class,'invoice_item_id','invoice_item_id');
+    }
     /*
     |--------------------------------------------------------------------------
     | Scopes
@@ -83,22 +89,23 @@ class InvoiceItemMovement extends Model
     */
 
     /**
-     * @param Builder<self> $query
+     * @param  Builder<self>  $query
      */
     public function scopeApproved($query)
     {
         return $query->where('is_approved', true);
     }
+
     /**
-     * @param Builder<self> $query
+     * @param  Builder<self>  $query
      */
     public function scopePending($query)
     {
         return $query->whereNull('is_approved');
     }
+
     /**
-     * @param Builder<self> $query
-     * @param InvoiceItemMovementEnum $type
+     * @param  Builder<self>  $query
      */
     public function scopeType($query, InvoiceItemMovementEnum $type)
     {
@@ -130,7 +137,7 @@ class InvoiceItemMovement extends Model
     {
         $this->update([
             'is_approved' => true,
-            'type' => InvoiceItemMovementEnum::APPROVED->value
+            'type' => InvoiceItemMovementEnum::APPROVED->value,
         ]);
     }
 

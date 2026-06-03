@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Enum\InvoiceItemMovementEnum;
 use App\Enum\InvoiceItemMovementReasonEnum;
-use App\Enum\InvoiceMovementEnum;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceItemMovement;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -17,7 +16,7 @@ class InvoiceItemMovementSeeder extends Seeder
      */
     public function run(): void
     {
-         $items = InvoiceItem::with('invoice')->get();
+        $items = InvoiceItem::with('invoice')->get();
 
         foreach ($items as $item) {
 
@@ -30,7 +29,7 @@ class InvoiceItemMovementSeeder extends Seeder
                 'uuid' => Str::uuid(),
                 'invoice_item_id' => $item->id,
                 'quantity' => $received,
-                'type' => InvoiceMovementEnum::RECEIVED->value,
+                'type' => InvoiceItemMovementEnum::RECEIVED->value,
                 'performed_at' => now()->subDays(2),
             ]);
 
@@ -39,7 +38,7 @@ class InvoiceItemMovementSeeder extends Seeder
                 'uuid' => Str::uuid(),
                 'invoice_item_id' => $item->id,
                 'quantity' => $received,
-                'type' => InvoiceMovementEnum::INSPECTED->value,
+                'type' => InvoiceItemMovementEnum::INSPECTED->value,
                 'performed_at' => now()->subDay(),
             ]);
 
@@ -52,7 +51,7 @@ class InvoiceItemMovementSeeder extends Seeder
                     'uuid' => Str::uuid(),
                     'invoice_item_id' => $item->id,
                     'quantity' => $rejected,
-                    'type' => InvoiceMovementEnum::REJECTED->value,
+                    'type' => InvoiceItemMovementEnum::REJECTED->value,
                     'reason' => fake()->randomElement(InvoiceItemMovementReasonEnum::cases())->value,
                     'performed_at' => now(),
                 ]);
@@ -66,7 +65,7 @@ class InvoiceItemMovementSeeder extends Seeder
                     'uuid' => Str::uuid(),
                     'invoice_item_id' => $item->id,
                     'quantity' => $received,
-                    'type' => InvoiceMovementEnum::APPROVED->value,
+                    'type' => InvoiceItemMovementEnum::APPROVED->value,
                     'performed_at' => now(),
                 ]);
             }

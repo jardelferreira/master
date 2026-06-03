@@ -12,52 +12,186 @@ class CategorySeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+   public function run(): void
     {
-         // Categorias principais
-        $parents = collect([
-            'EPIs',
-            'Ferramentas',
-            'Materiais Elétricos',
-            'Materiais Hidráulicos',
-            'Equipamentos',
-        ])->map(function ($name) {
-            return Category::create([
-                'uuid' => Str::uuid(),
-                'name' => $name,
-                'slug' => Str::slug($name),
-                'description' => "Categoria {$name}",
-                'active' => true,
-            ]);
-        });
+        $categories = [
+            [
+                'name' => 'Elétrica',
+                'description' => 'Materiais e equipamentos para instalações elétricas',
+                'meta' => [
+                    'sector' => 'eletrica',
+                    'icon' => 'zap',
+                    'color' => '#f59e0b',
+                ],
+                'children' => [
+                    'Cabos e Fios',
+                    'Disjuntores',
+                    'Quadros Elétricos',
+                    'Tomadas e Interruptores',
+                    'Eletrodutos e Conduítes',
+                    'Luminárias',
+                    'Transformadores',
+                    'Ferramentas Elétricas',
+                    'Equipamentos de Medição',
+                ],
+            ],
 
-        // Subcategorias
-        $children = [
-            'EPIs' => ['Luvas', 'Capacetes', 'Óculos de proteção'],
-            'Ferramentas' => ['Manuais', 'Elétricas'],
-            'Materiais Elétricos' => ['Cabos', 'Disjuntores'],
-            'Materiais Hidráulicos' => ['Tubos', 'Conexões'],
-            'Equipamentos' => ['Pesados', 'Leves'],
+            [
+                'name' => 'Civil',
+                'description' => 'Materiais para construção civil e infraestrutura',
+                'meta' => [
+                    'sector' => 'civil',
+                    'icon' => 'building',
+                    'color' => '#78716c',
+                ],
+                'children' => [
+                    'Cimento e Argamassa',
+                    'Areia e Brita',
+                    'Blocos e Tijolos',
+                    'Tubulações Hidráulicas',
+                    'Conexões',
+                    'Impermeabilização',
+                    'Ferragens',
+                    'Madeiras',
+                    'Ferramentas de Obra',
+                ],
+            ],
+
+            [
+                'name' => 'Engenharia',
+                'description' => 'Materiais técnicos e operacionais de engenharia',
+                'meta' => [
+                    'sector' => 'engenharia',
+                    'icon' => 'cpu',
+                    'color' => '#2563eb',
+                ],
+                'children' => [
+                    'Instrumentação',
+                    'Automação',
+                    'Sensores',
+                    'Válvulas',
+                    'Bombas',
+                    'Motores',
+                    'Rolamentos',
+                    'Acoplamentos',
+                    'Peças Técnicas',
+                ],
+            ],
+
+            [
+                'name' => 'QSMS',
+                'description' => 'Qualidade, Segurança, Meio Ambiente e Saúde',
+                'meta' => [
+                    'sector' => 'qsms',
+                    'icon' => 'shield-check',
+                    'color' => '#dc2626',
+                ],
+                'children' => [
+                    'EPIs',
+                    'EPCs',
+                    'Sinalização de Segurança',
+                    'Combate a Incêndio',
+                    'Kit Primeiros Socorros',
+                    'Proteção Respiratória',
+                    'Proteção Auditiva',
+                    'Proteção contra Queda',
+                ],
+            ],
+
+            [
+                'name' => 'Ferramentas',
+                'description' => 'Ferramentas manuais e operacionais',
+                'meta' => [
+                    'sector' => 'geral',
+                    'icon' => 'hammer',
+                    'color' => '#374151',
+                ],
+                'children' => [
+                    'Ferramentas Manuais',
+                    'Ferramentas de Corte',
+                    'Ferramentas de Medição',
+                    'Ferramentas Elétricas',
+                    'Ferramentas Pneumáticas',
+                    'Kits de Ferramentas',
+                ],
+            ],
+
+            [
+                'name' => 'Consumíveis',
+                'description' => 'Itens de consumo recorrente',
+                'meta' => [
+                    'sector' => 'geral',
+                    'icon' => 'package',
+                    'color' => '#16a34a',
+                ],
+                'children' => [
+                    'Parafusos e Fixadores',
+                    'Abraçadeiras',
+                    'Fitas',
+                    'Adesivos e Selantes',
+                    'Lubrificantes',
+                    'Discos de Corte',
+                    'Lixas',
+                    'Soldagem',
+                ],
+            ],
+
+            [
+                'name' => 'TI e Escritório',
+                'description' => 'Materiais administrativos e tecnologia',
+                'meta' => [
+                    'sector' => 'administrativo',
+                    'icon' => 'monitor',
+                    'color' => '#7c3aed',
+                ],
+                'children' => [
+                    'Informática',
+                    'Periféricos',
+                    'Impressão',
+                    'Materiais de Escritório',
+                    'Mobiliário',
+                ],
+            ],
+
+            [
+                'name' => 'Manutenção',
+                'description' => 'Itens voltados para manutenção corretiva e preventiva',
+                'meta' => [
+                    'sector' => 'manutencao',
+                    'icon' => 'wrench',
+                    'color' => '#0f766e',
+                ],
+                'children' => [
+                    'Peças de Reposição',
+                    'Correias',
+                    'Lubrificação',
+                    'Fixação',
+                    'Vedação',
+                    'Componentes Mecânicos',
+                ],
+            ],
         ];
 
-        foreach ($parents as $parent) {
-            if (!isset($children[$parent->name])) continue;
+        foreach ($categories as $categoryData) {
+            $parent = Category::create([
+                'name' => $categoryData['name'],
+                'description' => $categoryData['description'],
+                'active' => true,
+                'meta' => $categoryData['meta'],
+            ]);
 
-            foreach ($children[$parent->name] as $childName) {
+            foreach ($categoryData['children'] as $childName) {
                 Category::create([
-                    'uuid' => Str::uuid(),
                     'name' => $childName,
-                    'slug' => Str::slug($parent->name . '-' . $childName),
                     'parent_id' => $parent->id,
-                    'description' => "{$childName} de {$parent->name}",
+                    'description' => "{$childName} da categoria {$parent->name}",
                     'active' => true,
+                    'meta' => [
+                        'sector' => $categoryData['meta']['sector'],
+                        'parent' => $parent->name,
+                    ],
                 ]);
             }
         }
-
-        // categorias aleatórias extras
-        Category::factory()->count(20)->create();
-        // algumas inativas
-        Category::factory()->count(5)->inactive()->create();
     }
 }

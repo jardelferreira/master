@@ -28,6 +28,7 @@ class UserController extends Controller
                 'email' => $user->email,
                 'created_at' => $user->created_at,
                 'email_verified_at' => $user->email_verified_at ? $user->email_verified_at->diffForHumans() : null,
+                'active' => $user->active,
             ]),
         ]);
     }
@@ -194,7 +195,7 @@ class UserController extends Controller
         }
         $user->active = !$user->active;
         $user->update();
-
+        // dd($user);
         return back()->with('feedback', [
             'success' => true,
             'status' => 'success',

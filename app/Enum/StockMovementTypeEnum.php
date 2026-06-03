@@ -9,7 +9,7 @@ enum StockMovementTypeEnum: string
     case TRANSFER = 'transfer';       // transferência entre estoques
     case ASSIGNMENT = 'assignment';   // entrega para usuário (posse)
     case ADJUST = 'adjust';           // ajuste manual
-    case RETURN = 'return';           // devolução
+    case RETURN = 'return';           // devolução para o estoque
     case LOSS = 'loss';               // perda / descarte
 
     /*

@@ -14,6 +14,8 @@ enum InvoiceItemMovementEnum: string
     case RETURNED = 'returned';     // devolvido ao fornecedor
     case ADJUSTED = 'adjusted';     // ajuste (quantidade/divergência)
 
+    
+
     /*
     |--------------------------------------------------------------------------
     | Helpers de domínio

@@ -76,12 +76,12 @@ enum InvoiceItemDeliveryStatusEnum: string
     public function color(): string
     {
         return match ($this) {
-            self::PENDING => 'bg-gray-500/20 text-gray-300',
+            self::PENDING => 'bg-yellow-500  text-black-300',
             self::SCHEDULED => 'bg-blue-500/20 text-blue-300',
             self::IN_TRANSIT => 'bg-indigo-500/20 text-indigo-300',
             self::OUT_FOR_DELIVERY => 'bg-cyan-500/20 text-cyan-300',
 
-            self::DELIVERED => 'bg-emerald-500/20 text-emerald-300',
+            self::DELIVERED => 'bg-emerald-500 text-white',
             self::PARTIALLY_DELIVERED => 'bg-yellow-500/20 text-yellow-300',
 
             self::DELAYED => 'bg-orange-500/20 text-orange-300',

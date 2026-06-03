@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Stock;
 use App\Models\User;
 use App\Services\StockMovementService;
+use Illuminate\Database\Seeder;
 
 class StockOutSeeder extends Seeder
 {
@@ -37,7 +37,9 @@ class StockOutSeeder extends Seeder
             // até 70% do estoque
             $max = $stock->stock_quantity * 0.7;
 
-            if ($max <= 0) continue;
+            if ($max <= 0) {
+                continue;
+            }
 
             $quantity = round(fake()->randomFloat(3, 1, $max), 3);
 
@@ -61,11 +63,11 @@ class StockOutSeeder extends Seeder
 
                         break;
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ATRIBUIÇÃO (entrega para usuário)
-                    |--------------------------------------------------------------------------
-                    */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | ATRIBUIÇÃO (entrega para usuário)
+                        |--------------------------------------------------------------------------
+                        */
                     case 'assign':
 
                         $movementService->assignToUser(
@@ -77,11 +79,11 @@ class StockOutSeeder extends Seeder
 
                         break;
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | PERDA / DESCARTE
-                    |--------------------------------------------------------------------------
-                    */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PERDA / DESCARTE
+                        |--------------------------------------------------------------------------
+                        */
                     case 'loss':
 
                         $movementService->adjust(

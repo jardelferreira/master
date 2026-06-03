@@ -12,7 +12,7 @@ class StoreInvoiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,12 @@ class StoreInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'project_id' => 'required|exists:projects,id',
+            'sector_id' => 'required|exists:sectors,id',
+            'provider_id' => 'required|exists:providers,id',
+            'type' => 'required',
+            'total' => 'required|numeric',
+            'status' => 'required',
         ];
     }
 }

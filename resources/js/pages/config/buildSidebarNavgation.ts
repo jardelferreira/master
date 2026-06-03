@@ -1,4 +1,8 @@
-import { Home, UserLock, WaypointsIcon, User, FolderGit2, FileBox, FileText, PlusCircle } from 'lucide-react';
+import {
+    Home, UserLock, WaypointsIcon, User, FolderGit2,
+    FileBox, FileText, PlusCircle, Building2, Layers,
+    Package
+} from 'lucide-react';
 import { NavigationItem, NavLink } from './SidebarDashboard';
 
 
@@ -67,11 +71,31 @@ export function buildNavigation(
             children: [
                 {
                     type: 'link',
-                    href: "#",
+                    href: route('admin.invoices.index'),
                     label: "Notas fiscais",
                     icon: FileText,
-                    active: "admin.suply.invoices"
-                }
+                    active: "admin.invoices.index"
+                }, {
+                    type: 'link',
+                    href: route('admin.providers.index'),
+                    label: 'Fornecedores',
+                    icon: Building2,
+                    active: 'admin.providers.index',
+                },
+                {
+                    type: 'link',
+                    href: route('admin.categories.index'),
+                    label: 'Categorias',
+                    icon: Layers,
+                    active: 'admin.categories.index',
+                },
+                {
+                    type: 'link',
+                    href: route('admin.products.index'),
+                    label: 'Produtos',
+                    icon: Package,
+                    active: 'admin.products.index',
+                },
             ]
         },
     ];
