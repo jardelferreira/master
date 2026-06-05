@@ -253,7 +253,7 @@ export default function UsersIndex() {
                                 ...(emailVerificationEnabled
                                     ? [
                                         {
-                                            permissions: 'users.manager',
+                                            permissions: ['users.manager'],
                                             type: 'button' as const,
                                             onClick: () =>
                                                 setInviteOpen(true),

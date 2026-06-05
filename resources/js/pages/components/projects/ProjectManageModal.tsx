@@ -12,17 +12,21 @@ import { SimpleUser } from "@/types/user";
 import ProjectSectorsModal, { Sector } from "./ProjectSectorsModal";
 import ProjectEditModal from "./ProjectEditModal";
 import ProjectDeleteModal from "./ProjectDeleteModal";
+import ProjectTeamFormModal from "./ProjectTeamFormModal";
+import ProjectTeamsModal from "./ProjectTeamModal";
 import { usePage } from "@inertiajs/react";
+import { Team } from "@/types/team";
+import ProjectApplicationAreasModal from "./ProjectApplicationAreaModal";
 
 // ── Tipos ─────────────────────────────────────────
 
 type Project = {
-    id: number, 
+    id: number,
     name: string,
     description: string,
     initials: string,
     sectors: any[],
-    users: SimpleUser[] 
+    users: SimpleUser[]
 };
 
 type Props = {
@@ -30,12 +34,16 @@ type Props = {
     onClose: () => void;
     project: Project;
     users: SimpleUser[];
+    availableTeams: Team[];
+    availableAreas: Team[];
 };
 
 type ProjectModal =
     | null
     | 'users'
     | 'sectors'
+    | 'teams'
+    | 'applicationAreas'
     | 'edit'
     | 'delete';
 
@@ -46,6 +54,8 @@ export default function ProjectManageModal({
     onClose,
     project,
     users,
+    availableTeams,
+    availableAreas,
 }: Props) {
 
     const [modal, setModal] = useState<ProjectModal>(null);
@@ -99,6 +109,26 @@ export default function ProjectManageModal({
                         />
 
                         <ActionItem
+                            icon={Users}
+                            label="Equipes"
+                            description="Gerenciar equipes do projeto"
+                            onClick={() =>
+                                setModal('teams')
+                            }
+                        />
+
+                        <ActionItem
+                            icon={Layers}
+                            label="Áreas de Aplicação"
+                            description="Gerenciar áreas do projeto"
+                            onClick={() =>
+                                setModal(
+                                    'applicationAreas',
+                                )
+                            }
+                        />
+
+                        <ActionItem
                             icon={Pencil}
                             label="Editar projeto"
                             description="Alterar informações"
@@ -145,6 +175,26 @@ export default function ProjectManageModal({
                     onClose={closeChild}
                     project={project}
                     sectors={project.sectors || []}
+                />
+            )}
+
+            {modal === 'teams' && (
+                <ProjectTeamsModal
+                    open
+                    onClose={closeChild}
+                    availableTeams={availableTeams}
+                    project={project}
+                />
+            )}
+
+            {modal === 'applicationAreas' && (
+                <ProjectApplicationAreasModal
+                    open
+                    onClose={closeChild}
+                    project={project}
+                    availableAreas={
+                        availableAreas
+                    }
                 />
             )}
 

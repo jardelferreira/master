@@ -65,4 +65,26 @@ class Project extends Model
             ->where('active', true)
             ->first();
     }
+
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Team::class,
+            'project_team',
+            'project_id',
+            'team_id',
+        )
+            ->withTimestamps();
+    }
+
+    public function applicationAreas(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ApplicationArea::class,
+            'project_application_area',
+            'project_id',
+            'application_area_id',
+        )
+            ->withTimestamps();
+    }
 }

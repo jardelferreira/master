@@ -9,9 +9,20 @@ enum CompanyTypeEnum: string
 
     public function label(): string
     {
-        return match($this){
+        return match ($this) {
             self::OWN => 'Própria',
             self::THIRD_PARTY => 'Terceira',
         };
+    }
+
+    public static function options(): array
+    {
+        return collect(self::cases())
+            ->map(fn($type) => [
+                'value' => $type->value,
+                'label' => $type->label(),
+            ])
+            ->values()
+            ->toArray();
     }
 }

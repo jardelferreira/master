@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Resources\StockMovementResource;
+use App\Models\ApplicationArea;
 use App\Models\Project;
 use App\Models\Stock;
 use App\Models\StockMovement;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Inertia\View\Components\App;
 
 class ProjectController extends Controller
 {
@@ -55,10 +58,48 @@ class ProjectController extends Controller
         $movements = StockMovement::getStockMovementsPreview($project->id);
 
         return Inertia::render('dashboard/projects/Show', [
-            'project' => $project->load(['sectors', 'users', 'invoices']),
-            'users' => User::select('id', 'name','email')->get(),
+            'project' => $project->load([
+                'sectors',
+                'users',
+                'invoices',
+                'applicationAreas',
+                'teams' => fn($query) => $query
+                    ->withCount([
+                        'leaders',
+                        'employees',
+                    ]),
+            ]),
+            'users' => User::select('id', 'name', 'email')->get(),
             'sumary' => $project->getStockSummary(),
             'movements' => StockMovementResource::collection($movements)->resolve(),
+            'availableTeams' => Team::query()
+                ->whereDoesntHave(
+                    'projects',
+                    fn($query) =>
+                    $query->where(
+                        'projects.id',
+                        $project->id,
+                    ),
+                )
+                ->orderBy('name')
+                ->get([
+                    'id',
+                    'name',
+                ]),
+            'availableAreas' => ApplicationArea::query()
+                ->whereDoesntHave(
+                    'projects',
+                    fn($query) =>
+                    $query->where(
+                        'projects.id',
+                        $project->id,
+                    ),
+                )
+                ->orderBy('name')
+                ->get([
+                    'id',
+                    'name',
+                ]),
             'metrics' => [
                 'total_products' => 128,
                 'total_stock' => 3480,

@@ -73,7 +73,7 @@ export default function OccupationFormModal({
         if (isEditing) {
             put(
                 route(
-                    'admin.occupations.update',
+                    'admin.settings.occupations.update',
                     occupation.id,
                 ),
                 {
@@ -82,7 +82,7 @@ export default function OccupationFormModal({
             );
         } else {
             post(
-                route('admin.occupations.store'),
+                route('admin.settings.occupations.store'),
                 {
                     onSuccess: handleClose,
                 },

@@ -18,10 +18,15 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('cpf')->nullable();
 
-            $table->foreignId('company_id')->constrained()->nullOnDelete();
-            $table->foreignId('occupation_id')->constrained()->nullOnDelete();
+            $table->foreignId('company_id')
+                ->constrained()
+                ->restrictOnDelete();
 
-            $table->boolean('active')->default(true);            
+            $table->foreignId('occupation_id')
+                ->constrained()
+                ->restrictOnDelete();
+
+            $table->boolean('active')->default(true);
 
             $table->softDeletes();
             $table->timestamps();

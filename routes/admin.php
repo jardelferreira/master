@@ -1,16 +1,23 @@
 <?php
 
+use App\Http\Controllers\Admin\ApplicationAreaController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\InvoiceItemController;
 use App\Http\Controllers\Admin\InvoiceMovementController;
 use App\Http\Controllers\Admin\OccupationController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProjectApplicationAreaController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ProjectTeamController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\StockMinimalController;
+use App\Http\Controllers\Admin\TeamController;
+use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\UserInvitationController;
 use Illuminate\Support\Facades\Route;
@@ -133,6 +140,7 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('admin')->name('admin.')-
     Route::prefix('settings')
         ->name('settings.')
         ->group(function () {
+
             Route::resource(
                 'occupations',
                 OccupationController::class
@@ -142,9 +150,133 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('admin')->name('admin.')-
                 'update',
                 'destroy',
             ]);
+
+            Route::resource(
+                'companies',
+                CompanyController::class
+            )->only([
+                'index',
+                'store',
+                'update',
+                'destroy',
+            ]);
+
+            Route::resource(
+                'employees',
+                EmployeeController::class
+            )->except([
+                'create',
+                'show',
+                'edit',
+            ]);
+
+            Route::resource(
+                'teams',
+                TeamController::class
+            )->except([
+                'create',
+                'show',
+                'edit',
+            ]);
+
+            Route::prefix('teams/{team}')
+                ->name('teams.')
+                ->group(function () {
+
+                    Route::get(
+                        'members',
+                        [TeamMemberController::class, 'index']
+                    )->name('members.index');
+
+                    Route::post(
+                        'members',
+                        [TeamMemberController::class, 'store']
+                    )->name('members.store');
+
+                    Route::put(
+                        'members/{employee}',
+                        [TeamMemberController::class, 'update']
+                    )->name('members.update');
+
+                    Route::delete(
+                        'members/{employee}',
+                        [TeamMemberController::class, 'destroy']
+                    )->name('members.destroy');
+                });
+            Route::get(
+                'teams/tree',
+                [TeamController::class, 'tree']
+            )->name('teams.tree');
+            Route::get(
+                'teams/org-chart',
+                [TeamController::class, 'orgChart']
+            )->name('teams.org-chart');
+
+            Route::resource(
+                'application-areas',
+                ApplicationAreaController::class
+            )->except([
+                'create',
+                'show',
+                'edit',
+            ]);
         });
     Route::post(
         'occupations/{occupation}/toggle-status',
         [OccupationController::class, 'toggleStatus']
     )->name('occupations.toggleStatus');
+
+    Route::prefix('projects/{project}')
+        ->group(function () {
+
+            Route::get(
+                'teams',
+                [
+                    ProjectTeamController::class,
+                    'index',
+                ]
+            )->name(
+                'projects.teams.index'
+            );
+
+            Route::post(
+                'teams',
+                [
+                    ProjectTeamController::class,
+                    'store',
+                ]
+            )->name(
+                'projects.teams.store'
+            );
+
+            Route::delete(
+                'teams/{team}',
+                [
+                    ProjectTeamController::class,
+                    'destroy',
+                ]
+            )->name(
+                'projects.teams.destroy'
+            );
+        });
+
+    Route::post(
+        'projects/{project}/application-areas',
+        [
+            ProjectApplicationAreaController::class,
+            'store',
+        ],
+    )->name(
+        'projects.application-areas.store'
+    );
+
+    Route::delete(
+        'projects/{project}/application-areas/{applicationArea}',
+        [
+            ProjectApplicationAreaController::class,
+            'destroy',
+        ],
+    )->name(
+        'projects.application-areas.destroy'
+    );
 });

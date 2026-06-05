@@ -17,7 +17,7 @@ class OccupationController extends Controller
     {
 
         return Inertia::render(
-            'occupations/index',
+            'dashboard/occupations/Index',
             [
                 'occupations' => Occupation::query()
                     ->latest()

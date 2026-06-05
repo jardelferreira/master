@@ -2,9 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\ApplicationArea;
+use App\Models\Employee;
+use App\Models\InvoiceItem;
+use App\Models\Product;
+use App\Models\Project;
+use App\Models\Sector;
+use App\Models\Stock;
+use App\Models\StockMovement;
+use App\Models\Team;
+use App\Models\User;
 use Database\Factories\StockMovementFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class StockMovement extends Model
@@ -194,5 +205,34 @@ class StockMovement extends Model
             $this->isOut() => 'Saída do estoque',
             default => 'Movimento desconhecido'
         };
+    }
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(
+            Employee::class
+        );
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(
+            Team::class
+        );
+    }
+
+    public function leaderEmployee(): BelongsTo
+    {
+        return $this->belongsTo(
+            Employee::class,
+            'leader_employee_id',
+        );
+    }
+
+    public function applicationArea(): BelongsTo
+    {
+        return $this->belongsTo(
+            ApplicationArea::class
+        );
     }
 }

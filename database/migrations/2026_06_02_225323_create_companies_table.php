@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('trade_name')->nullable();
-            $table->string('document')->nullable();
+            $table->string('document')->nullable()->index();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('type');
@@ -23,6 +23,8 @@ return new class extends Migration
 
             $table->softDeletes();
             $table->timestamps();
+
+            
         });
     }
 
