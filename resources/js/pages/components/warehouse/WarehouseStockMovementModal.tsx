@@ -18,6 +18,23 @@ export type ProjectUser = {
     email: string;
 };
 
+type ReturnableMovement = {
+    id: number;
+    label: string;
+    type: string;
+
+    product: string;
+    employee: string | null;
+    team: string | null;
+
+    quantity: number;
+    available_quantity: number;
+
+    stock_id: number;
+    employee_id: number | null;
+    team_id: number | null;
+};
+
 type Stock = {
     id: number;
     project_id: number;
@@ -42,6 +59,26 @@ type SelectOption = {
     sublabel?: string;
 };
 
+type EmployeeOption = {
+    id: number;
+    name: string;
+};
+
+type TeamOption = {
+    id: number;
+    name: string;
+
+    employees: {
+        id: number;
+        name: string;
+    }[];
+};
+
+type ApplicationAreaOption = {
+    id: number;
+    name: string;
+};
+
 type Props = {
     open: boolean;
     onClose: () => void;
@@ -51,15 +88,33 @@ type Props = {
     stocks: Stock[];
     projectUsers: ProjectUser[];
     loadingUsers: boolean;
+    employees: EmployeeOption[];
+    teams: TeamOption[];
+    applicationAreas: ApplicationAreaOption[];
+    lockedMovementId?: number | null;
 };
 
 type FormData = {
     type: WarehouseMovementType;
+
     stock_id: number | '';
+
     quantity: string;
+
     new_quantity: string;
-    destination_stock_id: number | '';
+
+    destination_sector_id: number | '';
+
     destination_user_id: number | '';
+
+    employee_id: number | '';
+
+    movement_id: number | '';
+
+    team_id: number | '';
+
+    application_area_id: number | '';
+
     notes: string;
 };
 
@@ -84,6 +139,7 @@ function CustomSelect({
     placeholder = 'Selecione...',
     loading = false,
     loadingText = 'Carregando...',
+    disabled = false,
 }: {
     options: SelectOption[];
     value: number | '';
@@ -91,6 +147,7 @@ function CustomSelect({
     placeholder?: string;
     loading?: boolean;
     loadingText?: string;
+    disabled?: boolean;
 }) {
     const [open, setOpen] = useState(false);
     const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
@@ -133,6 +190,8 @@ function CustomSelect({
         };
     }, [open, computePosition]);
 
+
+
     // Fecha ao clicar fora
     useEffect(() => {
         if (!open) return;
@@ -150,9 +209,15 @@ function CustomSelect({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [open]);
 
+
+
     if (loading) {
         return (
-            <div className="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-500">
+            <div className={`flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm 
+            ${disabled
+                    ? 'cursor-not-allowed bg-slate-100 '
+                    : ''
+                }`}>
                 <Loader2 size={16} className="animate-spin" />
                 {loadingText}
             </div>
@@ -164,15 +229,16 @@ function CustomSelect({
             <button
                 ref={triggerRef}
                 type="button"
+                disabled={disabled}
                 onClick={() => setOpen((v) => !v)}
                 className="flex w-full items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-blue-500 hover:border-slate-300"
             >
-                <span className={selected ? 'text-slate-900' : 'text-slate-400'}>
+                <span className={selected ? '' : ''}>
                     {selected ? selected.label : placeholder}
                 </span>
                 <ChevronDown
                     size={16}
-                    className={`text-slate-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+                    className={` transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
                 />
             </button>
 
@@ -185,7 +251,7 @@ function CustomSelect({
                     >
                         <div className="max-h-[280px] overflow-y-auto py-1">
                             {options.length === 0 ? (
-                                <div className="px-4 py-3 text-sm text-slate-400">
+                                <div className="px-4 py-3 text-sm ">
                                     Nenhuma opção disponível
                                 </div>
                             ) : (
@@ -199,22 +265,20 @@ function CustomSelect({
                                                 onChange(opt.value);
                                                 setOpen(false);
                                             }}
-                                            className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm transition hover:bg-slate-50 ${
-                                                isSelected ? 'bg-blue-50' : ''
-                                            }`}
+                                            className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm transition hover:bg-slate-50 ${isSelected ? 'bg-blue-50' : ''
+                                                }`}
                                         >
                                             <span>
                                                 <span
-                                                    className={`block font-medium ${
-                                                        isSelected
-                                                            ? 'text-blue-700'
-                                                            : 'text-slate-800'
-                                                    }`}
+                                                    className={`block font-medium ${isSelected
+                                                        ? 'text-blue-700'
+                                                        : ''
+                                                        }`}
                                                 >
                                                     {opt.label}
                                                 </span>
                                                 {opt.sublabel && (
-                                                    <span className="block text-xs text-slate-400">
+                                                    <span className="block text-xs ">
                                                         {opt.sublabel}
                                                     </span>
                                                 )}
@@ -251,9 +315,23 @@ export default function WarehouseStockMovementModal({
     stocks,
     projectUsers,
     loadingUsers,
+    employees,
+    teams,
+    applicationAreas,
+    lockedMovementId = null,
 }: Props) {
     const [transferOptions, setTransferOptions] = useState<TransferOption[]>([]);
     const [loadingTransferOptions, setLoadingTransferOptions] = useState(false);
+    const [
+        returnableMovements,
+        setReturnableMovements,
+    ] = useState<ReturnableMovement[]>([]);
+
+    const [
+        loadingMovements,
+        setLoadingMovements,
+    ] = useState(false);
+
 
     const { data, setData, post, processing, reset, errors, clearErrors } =
         useForm<FormData>({
@@ -261,10 +339,19 @@ export default function WarehouseStockMovementModal({
             stock_id: '',
             quantity: '',
             new_quantity: '',
-            destination_stock_id: '',
+            destination_sector_id: '',
+            movement_id: '',
             destination_user_id: '',
+
+            employee_id: '',
+
+            team_id: '',
+
+            application_area_id: '',
+
             notes: '',
         });
+
 
     useEffect(() => {
         if (!movementType || !stock || !open) return;
@@ -274,11 +361,34 @@ export default function WarehouseStockMovementModal({
             stock_id: stock.id,
             quantity: '',
             new_quantity: '',
-            destination_stock_id: '',
+            destination_sector_id: '',
+            movement_id: lockedMovementId ?? '',
             destination_user_id: '',
+
+            employee_id: '',
+
+            team_id: '',
+
+            application_area_id: '',
+
             notes: '',
         });
     }, [movementType, stock, open]);
+
+    useEffect(() => {
+
+        if (movementType === 'return') {
+            return;
+        }
+
+        setData(
+            'employee_id',
+            '',
+        );
+
+    }, [
+        data.team_id,
+    ]);
 
     useEffect(() => {
         if (movementType !== 'transfer' || !stock || !open) {
@@ -294,12 +404,76 @@ export default function WarehouseStockMovementModal({
                     stock: stock.id,
                 }),
             )
-            .then((res) => { 
-                if (!cancelled) setTransferOptions(res.data); 
+            .then((res) => {
+                if (!cancelled) setTransferOptions(res.data);
             })
             .finally(() => { if (!cancelled) setLoadingTransferOptions(false); });
         return () => { cancelled = true; };
     }, [movementType, stock, open]);
+
+    useEffect(() => {
+
+        if (
+            !open ||
+            movementType !== 'return'
+        ) {
+            return;
+        }
+
+        setLoadingMovements(true);
+
+        axios.get(
+            route(
+                'warehouse.projects.movements.returnable',
+                {
+                    project: projectId,
+                },
+            ),
+        ).then(
+            ({ data }) =>
+                setReturnableMovements(
+                    data,
+                ),
+        )
+            .finally(
+                () =>
+                    setLoadingMovements(
+                        false,
+                    ),
+            );
+
+    }, [
+        open,
+        movementType,
+    ]);
+    useEffect(() => {
+
+        if (!data.movement_id) {
+            return;
+        }
+
+        const movement =
+            returnableMovements.find(
+                (item) =>
+                    item.id ===
+                    data.movement_id,
+            );
+
+        if (!movement) {
+            return;
+        }
+
+        setData((prev) => ({
+            ...prev,
+            stock_id: movement.stock_id,
+            employee_id: movement.employee_id ?? '',
+            team_id: movement.team_id ?? '',
+        }));
+
+    }, [
+        data.movement_id,
+        returnableMovements,
+    ]);
 
     if (!open || !movementType || !stock) return null;
 
@@ -307,6 +481,7 @@ export default function WarehouseStockMovementModal({
         reset();
         clearErrors();
         setTransferOptions([]);
+        setReturnableMovements([]);
         onClose();
     }
 
@@ -324,11 +499,51 @@ export default function WarehouseStockMovementModal({
         sublabel: u.email,
     }));
 
+
+    const teamOptions: SelectOption[] =
+        teams.map(
+            (team) => ({
+                value: team.id,
+                label: team.name,
+            }),
+        );
+
+    const applicationAreaOptions: SelectOption[] =
+        applicationAreas.map(
+            (area) => ({
+                value: area.id,
+                label: area.name,
+            }),
+        );
+
+    const selectedTeam =
+        teams.find(
+            (team) =>
+                team.id === data.team_id,
+        );
+
+    const employeeOptions: SelectOption[] =
+        selectedTeam
+            ? selectedTeam.employees.map(
+                (employee) => ({
+                    value: employee.id,
+                    label: employee.name,
+                }),
+            )
+            : [];
+
     const transferSelectOptions: SelectOption[] = transferOptions.map((t) => ({
         value: t.id,
         label: `${t.project.name} - ${t.sector?.name}`,
         sublabel: `${t.sector?.name ?? 'Sem setor'} · Saldo: ${t.stock_quantity}`,
     }));
+
+    const selectedReturnMovement =
+        returnableMovements.find(
+            movement =>
+                movement.id ===
+                data.movement_id,
+        );
 
     return (
         <div
@@ -339,13 +554,13 @@ export default function WarehouseStockMovementModal({
                 {/* HEADER */}
                 <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
                     <div>
-                        <h2 className="text-xl font-semibold text-slate-900">
+                        <h2 className="text-xl font-semibold ">
                             {TITLES[movementType]}
                         </h2>
-                        <p className="mt-1 text-sm text-slate-500">
+                        <p className="mt-1 ">
                             {stock.product.name}
                         </p>
-                        <p className="mt-1 text-xs text-slate-400">
+                        <p className="mt-1 ">
                             Saldo atual: {stock.stock_quantity}{' '}
                             {stock.product.unit ?? ''}
                         </p>
@@ -360,6 +575,66 @@ export default function WarehouseStockMovementModal({
 
                 {/* BODY */}
                 <form onSubmit={submit} className="space-y-6 p-6">
+
+                    {movementType === 'return' && (
+                        <Field>
+                            <Label> Movimentação origem</Label>
+
+                            {lockedMovementId ? (
+                                <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm ">
+                                    <span className="flex-1">
+                                        {returnableMovements.find(m => m.id === lockedMovementId)?.label
+                                            ?? `#${lockedMovementId}`}
+                                    </span>
+                                    <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium ">
+                                        fixo
+                                    </span>
+                                </div>
+                            ) : (
+                                <CustomSelect options={returnableMovements.map((movement,) => ({
+                                    value: movement.id,
+                                    label: movement.label,
+                                }),
+                                )
+                                }
+                                    value={data.movement_id}
+                                    onChange={(id) => setData('movement_id', id,)
+                                    }
+                                    loading={
+                                        loadingMovements
+                                    }
+                                />
+                            )}
+
+                            <ErrorMessage>
+                                {errors.movement_id}
+                            </ErrorMessage>
+                        </Field>
+                    )}
+                    {selectedReturnMovement && (
+                        <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm">
+                            <div>
+                                <strong>Produto:</strong>{' '}
+                                {selectedReturnMovement.product}
+                            </div>
+
+                            <div>
+                                <strong>Saldo disponível:</strong>{' '}
+                                {selectedReturnMovement.available_quantity}
+                            </div>
+
+                            <div>
+                                <strong>Colaborador:</strong>{' '}
+                                {selectedReturnMovement.employee}
+                            </div>
+
+                            <div>
+                                <strong>Equipe:</strong>{' '}
+                                {selectedReturnMovement.team}
+                            </div>
+                        </div>
+                    )}
+
                     {/* QUANTITY */}
                     {movementType !== 'adjust' && (
                         <Field>
@@ -367,7 +642,7 @@ export default function WarehouseStockMovementModal({
                             <input
                                 type="number"
                                 min="0"
-                                step="0.01"
+                                max={stock?.stock_quantity}
                                 value={data.quantity}
                                 onChange={(e) => setData('quantity', e.target.value)}
                                 className={inputClass}
@@ -398,17 +673,115 @@ export default function WarehouseStockMovementModal({
                             <Label>Estoque destino</Label>
                             <CustomSelect
                                 options={transferSelectOptions}
-                                value={data.destination_stock_id}
-                                onChange={(id) => setData('destination_stock_id', id)}
+                                value={data.destination_sector_id}
+                                onChange={(id) => setData('destination_sector_id', id)}
                                 placeholder="Selecione um destino"
                                 loading={loadingTransferOptions}
                                 loadingText="Carregando destinos..."
                             />
-                            <ErrorMessage>{errors.destination_stock_id}</ErrorMessage>
+                            <ErrorMessage>{errors.destination_sector_id}</ErrorMessage>
+                        </Field>
+
+                    )}
+
+                    {movementType === 'transfer' && (
+                        <Field>
+                            <Label>Responsável destino</Label>
+
+                            <CustomSelect
+                                options={userOptions}
+                                value={data.destination_user_id}
+                                onChange={(id) =>
+                                    setData(
+                                        'destination_user_id',
+                                        id,
+                                    )
+                                }
+                                placeholder="Selecione o responsável"
+                                loading={loadingUsers}
+                                loadingText="Carregando usuários..."
+                            />
+
+                            <ErrorMessage>
+                                {errors.destination_user_id}
+                            </ErrorMessage>
                         </Field>
                     )}
 
-                    {/* ASSIGNMENT */}
+                    {['consumption', 'assignment', 'return'].includes(movementType) && (
+                        <Field>
+                            <Label>Equipe</Label>
+
+                            <CustomSelect
+                                options={teamOptions}
+                                value={data.team_id}
+                                onChange={(id) =>
+                                    setData('team_id', id)
+                                }
+                                placeholder="Selecione uma equipe"
+                            />
+
+                            <ErrorMessage>
+                                {errors.team_id}
+                            </ErrorMessage>
+                        </Field>
+                    )}
+
+                    {['consumption', 'assignment', 'return'].includes(movementType) && (
+                        <Field>
+                            <Label>Colaborador</Label>
+
+                            <CustomSelect
+                                options={employeeOptions}
+                                disabled={
+                                    !data.team_id 
+                                }
+                                value={data.employee_id}
+                                onChange={(id) =>
+                                    setData('employee_id', id)
+                                }
+                                placeholder={
+                                    data.team_id
+                                        ? 'Selecione um colaborador'
+                                        : 'Selecione uma equipe primeiro'
+                                }
+                            />
+
+                            <ErrorMessage>
+                                {errors.employee_id}
+                            </ErrorMessage>
+                        </Field>
+                    )}
+
+                    {movementType === 'consumption' && (
+                        <Field>
+                            <Label>Área de Aplicação</Label>
+
+                            <CustomSelect
+                                options={
+                                    applicationAreaOptions
+                                }
+                                value={
+                                    data.application_area_id
+                                }
+                                onChange={(id) =>
+                                    setData(
+                                        'application_area_id',
+                                        id,
+                                    )
+                                }
+                                placeholder="Selecione uma área"
+                            />
+
+                            <ErrorMessage>
+                                {
+                                    errors.application_area_id
+                                }
+                            </ErrorMessage>
+                        </Field>
+                    )}
+
+                    {/* ASSIGNMENT
                     {movementType === 'assignment' && (
                         <Field>
                             <Label>Usuário destino</Label>
@@ -422,7 +795,7 @@ export default function WarehouseStockMovementModal({
                             />
                             <ErrorMessage>{errors.destination_user_id}</ErrorMessage>
                         </Field>
-                    )}
+                    )} */}
 
                     {/* NOTES */}
                     <Field>
@@ -478,7 +851,7 @@ function Field({ children }: { children: React.ReactNode }) {
 
 function Label({ children }: { children: React.ReactNode }) {
     return (
-        <label className="mb-2 block text-sm font-medium text-slate-700">
+        <label className="mb-2 block text-sm font-medium ">
             {children}
         </label>
     );

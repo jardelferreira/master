@@ -240,6 +240,7 @@ export default function StockEntry({ pendingItems, project }: Props) {
                                               icon: <ArrowDownCircle size={16} />,
                                               className:
                                                   'bg-emerald-600 text-white hover:bg-emerald-700 transition-colors',
+                                              permissions: [],
                                               onClick: handleOpenModal,
                                           },
                                       ]

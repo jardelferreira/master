@@ -18,7 +18,7 @@ Route::prefix('warehouse')
                 ->name('login.store');
         });
 
-        Route::middleware('auth')->group(function () {
+        Route::middleware('auth:warehouse')->group(function () {
             Route::post('/logout', [WarehouseAuthController::class, 'destroy'])
                 ->name('logout');
 
@@ -33,7 +33,6 @@ Route::prefix('warehouse')
 
             Route::post('/projects/{project}/movements', [WarehouseMovementController::class, 'store'])
                 ->name('projects.movements.store');
-        });
         Route::get(
             '/projects/{project}/stocks/{stock}/transfer-options',
             [WarehouseStockController::class, 'transferOptions']
@@ -44,18 +43,20 @@ Route::prefix('warehouse')
             [WarehouseDashboardController::class, 'users']
         )->name('projects.users');
 
-        // Route::get('/', [WarehouseDashboardController::class, 'index'])
-        //     ->name('index');
-
-        // Route::get('/projects/{project}', [WarehouseDashboardController::class, 'show'])
-        //     ->name('projects.show');
-
-        // Route::get('/projects/{project}/stocks', [WarehouseStockController::class, 'index'])
-        //     ->name('projects.stocks');
-
 
         Route::get(
             '/projects/{project}/movements',
             [WarehouseMovementController::class, 'index']
         )->name('projects.movements.index');
+
+        Route::get(
+            '/projects/{project}/warehouse/movements/returnable',
+            [
+                WarehouseMovementController::class,
+                'returnableMovements',
+            ]
+        )->name('projects.movements.returnable' );
+
+        });
+        
     });

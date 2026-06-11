@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTO\StockMovementContext;
 use App\Enum\StockMovementTypeEnum;
 use App\Models\Sector;
 use App\Models\Stock;
@@ -30,7 +31,7 @@ class StockMovementService
             $quantity,
             $userId,
             $notes,
-            $meta
+            $meta,
         ) {
             $stock = $this->lockStock($stock);
 
@@ -62,6 +63,7 @@ class StockMovementService
         float $quantity,
         ?int $userId = null,
         ?string $notes = null,
+        ?StockMovementContext $context = null,
         array $meta = []
     ): StockMovement {
         return DB::transaction(function () use (
@@ -69,7 +71,8 @@ class StockMovementService
             $quantity,
             $userId,
             $notes,
-            $meta
+            $context,
+            $meta,
         ) {
             $stock = $this->lockStock($stock);
 
@@ -78,7 +81,6 @@ class StockMovementService
 
             $stock->decrement('stock_quantity', $quantity);
             $stock->refresh();
-
             return $this->createMovement(
                 stock: $stock,
                 quantity: $quantity,
@@ -86,7 +88,8 @@ class StockMovementService
                 direction: 'out',
                 userId: $userId,
                 notes: $notes,
-                meta: $meta
+                context: $context,
+                meta: $meta,
             );
         });
     }
@@ -101,6 +104,7 @@ class StockMovementService
         Stock $source,
         Sector $sector,
         float $quantity,
+        StockMovementContext $context,
         ?int $userId = null,
         ?string $notes = null,
         array $meta = []
@@ -110,8 +114,9 @@ class StockMovementService
             $sector,
             $quantity,
             $userId,
+            $context,
             $notes,
-            $meta
+            $meta,
         ) {
             $source = $this->lockStock($source);
             $destination = $source->replicate(['stock_quantity']);
@@ -136,6 +141,7 @@ class StockMovementService
                 direction: 'out',
                 userId: $userId,
                 notes: $notes,
+                context: $context,
                 sourceStockId: $source->id,
                 destinationStockId: $destination->id,
                 meta: $meta
@@ -150,6 +156,7 @@ class StockMovementService
                 type: StockMovementTypeEnum::TRANSFER,
                 direction: 'in',
                 userId: $userId,
+                context: $context,
                 notes: $notes,
                 sourceStockId: $source->id,
                 destinationStockId: $destination->id,
@@ -172,7 +179,7 @@ class StockMovementService
     public function assignToUser(
         Stock $stock,
         float $quantity,
-        int $destinationUserId,
+        StockMovementContext $context,
         ?int $userId = null,
         ?string $notes = null,
         array $meta = []
@@ -180,7 +187,7 @@ class StockMovementService
         return DB::transaction(function () use (
             $stock,
             $quantity,
-            $destinationUserId,
+            $context,
             $userId,
             $notes,
             $meta
@@ -200,8 +207,54 @@ class StockMovementService
                 direction: 'out',
                 userId: $userId,
                 notes: $notes,
-                destinationUserId: $destinationUserId,
+                context: $context,
                 meta: $meta
+            );
+        });
+    }
+
+    public function returnFromUser(
+        Stock $stock,
+        float $quantity,
+        StockMovementContext $context,
+        ?int $userId = null,
+        ?string $notes = null,
+        array $meta = []
+    ): StockMovement {
+
+        return DB::transaction(function () use (
+            $stock,
+            $quantity,
+            $userId,
+            $notes,
+            $context,
+            $meta
+        ) {
+
+            $stock = $this->lockStock(
+                $stock
+            );
+
+            $this->assertPositiveQuantity(
+                $quantity
+            );
+
+            $stock->increment(
+                'stock_quantity',
+                $quantity
+            );
+
+            $stock->refresh();
+
+            return $this->createMovement(
+                stock: $stock,
+                quantity: $quantity,
+                type: StockMovementTypeEnum::ASSIGNMENT_RETURN,
+                direction: 'in',
+                userId: $userId,
+                notes: $notes,
+                context: $context,
+                meta: $meta,
             );
         });
     }
@@ -224,7 +277,7 @@ class StockMovementService
             $newQuantity,
             $userId,
             $notes,
-            $meta
+            $meta,
         ) {
             $stock = $this->lockStock($stock);
 
@@ -278,7 +331,7 @@ class StockMovementService
             $quantity,
             $userId,
             $notes,
-            $meta
+            $meta,
         ) {
             $stock = $this->lockStock($stock);
 
@@ -307,38 +360,77 @@ class StockMovementService
     */
 
     public function returnToStock(
-        Stock $stock,
+        StockMovement $movement,
         float $quantity,
+        StockMovementContext $context,
         ?int $userId = null,
         ?string $notes = null,
         array $meta = []
     ): StockMovement {
+
         return DB::transaction(function () use (
-            $stock,
+            $movement,
             $quantity,
+            $context,
             $userId,
             $notes,
-            $meta
+            $meta,
         ) {
-            $stock = $this->lockStock($stock);
 
-            $this->assertPositiveQuantity($quantity);
+            if (! $movement->canReceiveReturns()) {
+                throw new DomainException(
+                    'Esta movimentação não aceita devoluções.'
+                );
+            }
 
-            $stock->increment('stock_quantity', $quantity);
+            $this->assertPositiveQuantity(
+                $quantity
+            );
+
+            $available =
+                $movement->getNetQuantity();
+
+            if ($quantity > $available) {
+                throw new DomainException(
+                    sprintf(
+                        'Quantidade disponível para devolução: %.3f',
+                        $available,
+                    ),
+                );
+            }
+
+            $stock = $this->lockStock(
+                $movement->stock
+            );
+
+            $stock->increment(
+                'stock_quantity',
+                $quantity,
+            );
+
             $stock->refresh();
 
             return $this->createMovement(
                 stock: $stock,
+
                 quantity: $quantity,
+
                 type: StockMovementTypeEnum::RETURN,
+
                 direction: 'in',
+
                 userId: $userId,
+
                 notes: $notes,
-                meta: $meta
+
+                parentMovementId: $movement->id,
+
+                context: $context,
+
+                meta: $meta,
             );
         });
     }
-
     /*
     |--------------------------------------------------------------------------
     | HELPERS
@@ -398,9 +490,14 @@ class StockMovementService
         ?string $notes = null,
         ?int $sourceStockId = null,
         ?int $destinationStockId = null,
-        ?int $destinationUserId = null,
+        ?int $parentMovementId = null,
+        ?StockMovementContext $context = null,
         array $meta = []
     ): StockMovement {
+        $movementMeta = array_merge(
+            $context?->meta ?? [],
+            $meta
+        );
         return StockMovement::create([
             'uuid' => Str::uuid(),
 
@@ -410,21 +507,46 @@ class StockMovementService
             'project_id' => $stock->project_id,
             'sector_id' => $stock->sector_id,
 
+            'employee_id' =>
+            $context?->employeeId,
+
+            'team_id' =>
+            $context?->teamId,
+
+            'leader_employee_id' =>
+            $context?->leaderEmployeeId,
+
+            'application_area_id' =>
+            $context?->applicationAreaId,
+
+            'parent_movement_id' =>
+            $parentMovementId,
+
             'quantity' => $quantity,
+
             'type' => $type->value,
+
             'direction' => $direction,
 
-            'source_stock_id' => $sourceStockId,
-            'destination_stock_id' => $destinationStockId,
-            'destination_user_id' => $destinationUserId,
+            'source_stock_id' =>
+            $sourceStockId,
 
-            'balance_after' => $stock->stock_quantity,
+            'destination_stock_id' =>
+            $destinationStockId,
+
+            'destination_user_id' =>
+            $context?->destinationUserId,
+
+            'balance_after' =>
+            $stock->stock_quantity,
 
             'performed_at' => now(),
+
             'user_id' => $userId,
+
             'notes' => $notes,
 
-            'meta' => $meta,
+            'meta' => $movementMeta,
         ]);
     }
 }

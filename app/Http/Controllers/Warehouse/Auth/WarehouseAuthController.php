@@ -26,7 +26,7 @@ class WarehouseAuthController extends Controller
 
         $remember = (bool) $request->boolean('remember');
 
-        if (! Auth::attempt($credentials, $remember)) {
+        if (! Auth::guard('warehouse')->attempt($credentials, $remember)) {
             return back()->withErrors([
                 'email' => 'Credenciais inválidas.',
             ]);

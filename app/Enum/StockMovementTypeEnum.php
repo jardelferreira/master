@@ -8,6 +8,7 @@ enum StockMovementTypeEnum: string
     case CONSUMPTION = 'consumption'; // saída por uso
     case TRANSFER = 'transfer';       // transferência entre estoques
     case ASSIGNMENT = 'assignment';   // entrega para usuário (posse)
+    case ASSIGNMENT_RETURN = 'assignment_return';
     case ADJUST = 'adjust';           // ajuste manual
     case RETURN = 'return';           // devolução para o estoque
     case LOSS = 'loss';               // perda / descarte
@@ -23,6 +24,7 @@ enum StockMovementTypeEnum: string
         return in_array($this, [
             self::ENTRY,
             self::RETURN,
+            self::ASSIGNMENT_RETURN,
         ]);
     }
 
@@ -54,6 +56,7 @@ enum StockMovementTypeEnum: string
             self::CONSUMPTION => 'Consumo',
             self::TRANSFER => 'Transferência',
             self::ASSIGNMENT => 'Atribuição / Posse',
+            self::ASSIGNMENT_RETURN => 'Devolução / retorno',
             self::ADJUST => 'Ajuste',
             self::RETURN => 'Devolução',
             self::LOSS => 'Perda / Descarte',
@@ -67,6 +70,7 @@ enum StockMovementTypeEnum: string
             self::CONSUMPTION => 'bg-red-500/20 text-red-300',
             self::TRANSFER => 'bg-blue-500/20 text-blue-300',
             self::ASSIGNMENT => 'bg-purple-500/20 text-purple-300',
+            self::ASSIGNMENT_RETURN => 'bg-bue-500/20 text-bue-300',
             self::ADJUST => 'bg-yellow-500/20 text-yellow-300',
             self::RETURN => 'bg-cyan-500/20 text-cyan-300',
             self::LOSS => 'bg-orange-500/20 text-orange-300',

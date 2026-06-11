@@ -9,6 +9,7 @@ class StockMovementContext
         public readonly ?int $teamId = null,
         public readonly ?int $leaderEmployeeId = null,
         public readonly ?int $applicationAreaId = null,
+        public readonly ?int $destinationUserId = null,
         public readonly array $meta = [],
     ) {}
 
@@ -19,6 +20,7 @@ class StockMovementContext
             'team_id' => $this->teamId,
             'leader_employee_id' => $this->leaderEmployeeId,
             'application_area_id' => $this->applicationAreaId,
+            'destination_user_id' => $this->destinationUserId,
         ];
     }
 }

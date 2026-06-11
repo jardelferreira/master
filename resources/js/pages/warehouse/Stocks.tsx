@@ -54,13 +54,42 @@ type ProjectUser = {
     email: string;
 };
 
-type Props = {
-    project: Project;
-    stocks: Stock[];
+type EmployeeOption = {
+    id: number;
+    name: string;
 };
 
+
+type ApplicationAreaOption = {
+    id: number;
+    name: string;
+};
+
+type TeamOption = {
+    id: number;
+    name: string;
+
+    employees: {
+        id: number;
+        name: string;
+    }[];
+};
+
+type Props = {
+    project: Project;
+
+    stocks: Stock[];
+
+    employees: EmployeeOption[];
+
+    teams: TeamOption[];
+
+    applicationAreas: ApplicationAreaOption[];
+};
+
+
 export default function WarehouseStocks() {
-    const { project, stocks } =
+    const { project, stocks, employees, teams, applicationAreas, auth } =
         usePage<Props>().props;
 
     const [selectedStock, setSelectedStock] =
@@ -106,6 +135,18 @@ export default function WarehouseStocks() {
     function closeMovementModal() {
         setSelectedStock(null);
         setSelectedMovementType(null);
+    }
+
+    function openReturn() {
+        setSelectedMovementType('return');
+        setSelectedStock({
+            id: 0,
+            uuid: '',
+            project_id: project.id,
+            product: { id: 0, name: '' },
+            stock_quantity: 0,
+            status: 'ok',
+        });
     }
 
     const stats = useMemo(
@@ -167,9 +208,7 @@ export default function WarehouseStocks() {
             },
             cell: ({ row }) => (
                 <span className="text-gray-700">
-                    {row.original.sector
-                        ?.name ??
-                        'Sem setor'}
+                    {`${row.original.sector?.name}`}
                 </span>
             ),
         },
@@ -180,8 +219,7 @@ export default function WarehouseStocks() {
             cell: ({ row }) => (
                 <span className="font-semibold text-blue-950">
                     {
-                        row.original
-                            .stock_quantity
+                        `${row.original.stock_quantity} ${row.original.unit}${row.original.stock_quantity > 1 ? 's':''}`
                     }
                 </span>
             ),
@@ -250,27 +288,38 @@ export default function WarehouseStocks() {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-3">
-                            <MetricCard
-                                label="Produtos"
-                                value={
-                                    stats.total
-                                }
-                            />
+                        <div className="flex flex-col items-end gap-3">
+                            <button
+                                type="button"
+                                onClick={openReturn}
+                                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
+                            >
+                                <RotateCcw size={15} />
+                                Registrar Devolução
+                            </button>
 
-                            <MetricCard
-                                label="Críticos"
-                                value={
-                                    stats.critical
-                                }
-                            />
+                            <div className="grid grid-cols-3 gap-3">
+                                <MetricCard
+                                    label="Produtos"
+                                    value={
+                                        stats.total
+                                    }
+                                />
 
-                            <MetricCard
-                                label="Sem estoque"
-                                value={
-                                    stats.empty
-                                }
-                            />
+                                <MetricCard
+                                    label="Críticos"
+                                    value={
+                                        stats.critical
+                                    }
+                                />
+
+                                <MetricCard
+                                    label="Sem estoque"
+                                    value={
+                                        stats.empty
+                                    }
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -303,8 +352,12 @@ export default function WarehouseStocks() {
                 projectId={project.id}
                 stock={selectedStock}
                 stocks={stocks}
+                
                 projectUsers={projectUsers}
                 loadingUsers={loadingUsers}
+                employees={employees}
+                teams={teams}
+                applicationAreas={applicationAreas}
             />
         </>
     );
@@ -401,13 +454,6 @@ function RowActions({
             type: 'loss',
             className:
                 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100',
-        },
-        {
-            label: 'Devolver',
-            icon: RotateCcw,
-            type: 'return',
-            className:
-                'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100',
         },
         {
             label: 'Atribuir',

@@ -3,12 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ConsumeStockRequest;
+use App\Http\Requests\ReceiveStockEntriesRequest;
 use App\Http\Requests\StoreStockRequest;
 use App\Http\Requests\UpdateStockRequest;
+use App\Models\ApplicationArea;
+use App\Models\Employee;
 use App\Models\InvoiceItem;
 use App\Models\Project;
 use App\Models\Stock;
+use App\Models\Team;
 use App\Services\InvoiceItemMovementService;
+use App\Services\StockMovementContextResolver;
 use App\Services\StockService;
 use App\Support\FlashMessage;
 use Illuminate\Http\Request;
@@ -20,7 +26,8 @@ class StockController extends Controller
     use FlashMessage;
     public function __construct(
         protected StockService $stockService,
-        protected InvoiceItemMovementService $invoiceItemMovementService
+        protected InvoiceItemMovementService $invoiceItemMovementService,
+        private readonly StockMovementContextResolver $contextResolver,
     ) {}
 
     /**
@@ -157,54 +164,102 @@ class StockController extends Controller
     /**
      * Receber items no estoque.
      */
-    public function receiveEntries(Request $request)
-    {
-        $data = $request->validate([
-            'items' => ['required', 'array', 'min:1'],
-            'items.*.invoice_item_id' => ['required', 'integer', 'exists:invoice_items,id'],
-            'items.*.quantity' => ['required', 'numeric', 'min:0.001'],
-        ]);
-
-        $result = $this->stockService->receiveFromInvoiceItems(
-            items: $data['items'],
-            userId: Auth::id()
-        );
+    public function receiveEntries(
+        ReceiveStockEntriesRequest $request
+    ) {
+        $result =
+            $this->stockService
+            ->receiveFromInvoiceItems(
+                items: $request->validated(
+                    'items'
+                ),
+                userId: Auth::id(),
+            );
 
         if (!$result->success) {
-            return $this->error($result->message);
+            return $this->error(
+                $result->message
+            );
         }
 
         return $this->success(
-            sprintf('%d item(s) recebido(s) no estoque', count($result->data))
+            sprintf(
+                '%d item(s) recebido(s) no estoque',
+                count(
+                    $result->data
+                ),
+            ),
         );
     }
 
     /**
      * Baixa/consumo de múltiplos stocks.
      */
-    public function consume(Request $request)
-    {
-        $data = $request->validate([
-            'consumptions' => ['required', 'array', 'min:1'],
-            'consumptions.*.stock_id' => ['required', 'integer', 'exists:stocks,id'],
-            'consumptions.*.quantity' => ['required', 'numeric', 'min:0.001'],
-            'notes' => ['nullable', 'string', 'max:1000'],
-        ]);
+    public function consume(
+        ConsumeStockRequest $request
+    ) {
+        $data =
+            $request->validated();
 
-        $consumptions = collect($data['consumptions'])
-            ->pluck('quantity', 'stock_id')
+        $consumptions =
+            collect(
+                $data['consumptions']
+            )
+            ->pluck(
+                'quantity',
+                'stock_id'
+            )
             ->toArray();
 
-        $result = $this->stockService->consumeMultiple(
-            consumptions: $consumptions,
-            userId: Auth::id(),
-            meta: ['notes' => $data['notes'] ?? null]
+        $project = Project::findOrFail(
+            $data['project_id']
         );
 
+        $employee = Employee::findOrFail(
+            $data['employee_id']
+        );
+
+        $team = Team::findOrFail(
+            $data['team_id']
+        );
+
+        $applicationArea = ApplicationArea::findOrFail(
+                $data['application_area_id']
+            );
+            
+        $context =
+            $this->contextResolver
+            ->buildConsumptionContext(
+                project: $project,
+                employee: $employee,
+                team: $team,
+                applicationArea: $applicationArea,
+            );
+
+        $result =
+            $this->stockService
+            ->consumeMultiple(
+                consumptions: $consumptions,
+
+                userId: Auth::id(),
+
+                context: $context,
+                notes: $data['notes'] ?? null,
+                meta: [
+                    'notes' =>
+                    $data['notes']
+                        ?? null,
+                ],
+            );
+
         if (!$result->success) {
-            return $this->error($result->message);
+            return $this->error(
+                $result->message
+            );
         }
 
-        return $this->success('Baixa registrada com sucesso');
+        return $this->success(
+            'Baixa registrada com sucesso'
+        );
     }
 }

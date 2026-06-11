@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Warehouse;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Project;
 use App\Models\Sector;
 use App\Models\Stock;
@@ -88,15 +89,69 @@ class WarehouseStockController extends Controller
                 ];
             });
 
-        return Inertia::render('warehouse/Stocks', [
-            'project' => [
-                'id' => $project->id,
-                'uuid' => $project->uuid,
-                'name' => $project->name,
-            ],
-            'stocks' => $stocks,
-            'users' => User::all(),
-        ]);
+
+        $teams = $project
+            ->teams()
+            ->with([
+                'employees:id,name',
+            ])
+            ->orderBy('teams.name')
+            ->get([
+                'teams.id',
+                'teams.name',
+            ]); 
+
+        $applicationAreas = $project
+            ->applicationAreas()
+            ->select([
+                'application_areas.id',
+                'application_areas.name',
+            ])
+            ->orderBy('application_areas.name')
+            ->get();
+
+        $employees = Employee::query()
+            ->whereHas(
+                'teams.projects',
+                fn($query) =>
+                $query->where(
+                    'projects.id',
+                    $project->id,
+                ),
+            )
+            ->orderBy('name')
+            ->get([
+                'employees.id',
+                'employees.name',
+            ]);
+
+        return Inertia::render(
+            'warehouse/Stocks',
+            [
+                'project' => [
+                    'id' => $project->id,
+                    'uuid' => $project->uuid,
+                    'name' => $project->name,
+                ],
+
+                'stocks' => $stocks,
+
+                'users' => User::query()
+                    ->orderBy('name')
+                    ->get([
+                        'id',
+                        'name',
+                        'email',
+                    ]),
+
+                'employees' => $employees,
+
+                'teams' => $teams,
+
+                'applicationAreas' =>
+                $applicationAreas,
+            ]
+        );
     }
 
     public function transferOptions(

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\StockMovementTypeEnum;
 use App\Models\ApplicationArea;
 use App\Models\Employee;
 use App\Models\InvoiceItem;
@@ -9,10 +10,10 @@ use App\Models\Product;
 use App\Models\Project;
 use App\Models\Sector;
 use App\Models\Stock;
-use App\Models\StockMovement;
 use App\Models\Team;
 use App\Models\User;
 use Database\Factories\StockMovementFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +37,11 @@ class StockMovement extends Model
 
         'user_id',
         'destination_user_id',
+        'employee_id',
+        'team_id',
+        'application_area_id',
+        'leader_employee_id',
+        'parent_movement_id',
 
         'quantity',
         'type',
@@ -55,6 +61,7 @@ class StockMovement extends Model
         'quantity' => 'decimal:3',
         'balance_after' => 'decimal:3',
         'performed_at' => 'datetime',
+        'type' => StockMovementTypeEnum::class,
         'meta' => 'array',
     ];
 
@@ -138,11 +145,90 @@ class StockMovement extends Model
         return $this->belongsTo(Sector::class);
     }
 
+    public function parent()
+    {
+        return $this->belongsTo(
+            StockMovement::class,
+            'parent_movement_id',
+        );
+    }
+
+    public function children()
+    {
+        return $this->hasMany(
+            StockMovement::class,
+            'parent_movement_id',
+        );
+    }
+
+
+    public function returns()
+    {
+        return $this->children()
+            ->where(
+                'type',
+                StockMovementTypeEnum::RETURN->value
+            );
+    }
+
+    public function getReturnedQuantity(): float
+    {
+        return (float) $this->returns()
+            ->sum('quantity');
+    }
+
+    public function getNetQuantity(): float
+    {
+        return max(
+            0,
+            (float) $this->quantity -
+                $this->getReturnedQuantity()
+        );
+    }
+
+    public function canReceiveReturns(): bool
+    {
+        return ! in_array(
+            $this->type,
+            [
+                StockMovementTypeEnum::LOSS->value,
+                StockMovementTypeEnum::RETURN->value,
+                StockMovementTypeEnum::ADJUST->value,
+                StockMovementTypeEnum::ENTRY->value,
+            ]
+        );
+    }
+
+    public function getReturnLabelAttribute(): string
+    {
+        return sprintf(
+            '#%d | %s | %s | Saldo: %.3f',
+            $this->id,
+            $this->type,
+            $this->stock?->product?->name,
+            $this->getNetQuantity()
+        );
+    }
     /*
     |--------------------------------------------------------------------------
     | Scopes
     |--------------------------------------------------------------------------
     */
+
+    public function scopeReturnable(
+        Builder $query
+    ): Builder {
+
+        return $query->whereNotIn(
+            'type',
+            [
+                StockMovementTypeEnum::LOSS->value,
+                StockMovementTypeEnum::RETURN->value,
+                StockMovementTypeEnum::ADJUST->value,
+                StockMovementTypeEnum::ENTRY->value,
+            ]
+        );
+    }
 
     public function scopeIn($query)
     {

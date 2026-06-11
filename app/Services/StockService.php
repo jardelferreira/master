@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTO\StockMovementContext;
 use App\Models\InvoiceItem;
 use App\Models\Stock;
 use App\Models\StockMovement;
@@ -11,6 +12,10 @@ use Illuminate\Support\Str;
 
 class StockService
 {
+
+    public function __construct(
+        private readonly StockMovementService $movementService,
+    ) {}
     /*
     |--------------------------------------------------------------------------
     | ENTRY FROM INVOICE ITEM
@@ -19,7 +24,7 @@ class StockService
     public function addFromInvoiceItem(
         InvoiceItem $item,
         float $quantity,
-        ?int $userId = null
+        int $userId,
     ): ServiceResult {
         if ($quantity <= 0) {
             return ServiceResult::fail('Quantidade inválida.');
@@ -48,20 +53,17 @@ class StockService
                 ]);
             }
 
-            $stock->increment('stock_quantity', $quantity);
-            
-
-            $movement = $this->logMovement(
-                stock: $stock,
-                quantity: $quantity,
-                direction: 'in',
-                type: 'entry',
-                userId: $userId,
-                meta: [
-                    'source' => 'invoice_item',
-                    'invoice_item_id' => $item->id,
-                ]
-            );
+            $movement =
+                $this->movementService
+                ->entry(
+                    stock: $stock,
+                    quantity: $quantity,
+                    userId: $userId,
+                    meta: [
+                        'source' => 'invoice_item',
+                        'invoice_item_id' => $item->id,
+                    ]
+                );
 
             return ServiceResult::ok($movement);
         });
@@ -115,14 +117,16 @@ class StockService
     public function consume(
         Stock $stock,
         float $quantity,
-        ?int $userId = null,
+        StockMovementContext $context,
+        int $userId,
+        ?string $notes,
         array $meta = []
     ): ServiceResult {
         if ($quantity <= 0) {
             return ServiceResult::fail('Quantidade inválida.');
         }
 
-        return DB::transaction(function () use ($stock, $quantity, $userId, $meta) {
+        return DB::transaction(function () use ($stock, $quantity, $userId, $meta, $context, $notes) {
 
             $stock = Stock::lockForUpdate()->find($stock->id);
 
@@ -130,16 +134,16 @@ class StockService
                 return ServiceResult::fail('Estoque insuficiente.');
             }
 
-            $stock->decrement('stock_quantity', $quantity);
-
-            $movement = $this->logMovement(
-                stock: $stock,
-                quantity: $quantity,
-                direction: 'out',
-                type: 'consumption',
-                userId: $userId,
-                meta: $meta
-            );
+            $movement =
+                $this->movementService
+                ->consume(
+                    stock: $stock,
+                    quantity: $quantity,
+                    userId: $userId,
+                    context: $context,
+                    notes: $notes,
+                    meta: $meta,
+                );
 
             return ServiceResult::ok($movement);
         });
@@ -147,7 +151,9 @@ class StockService
 
     public function consumeMultiple(
         array $consumptions,
-        ?int $userId = null,
+        int $userId,
+        StockMovementContext $context,
+        ?string $notes = null,
         array $meta = []
     ): ServiceResult {
 
@@ -155,7 +161,7 @@ class StockService
             return ServiceResult::fail('Nenhum item informado para baixa.');
         }
 
-        return DB::transaction(function () use ($consumptions, $userId, $meta) {
+        return DB::transaction(function () use ($consumptions, $userId, $context, $meta, $notes) {
 
             $movements = [];
 
@@ -178,52 +184,27 @@ class StockService
                     );
                 }
 
-                // 🔥 decrementa estoque
-                $stock->decrement('stock_quantity', $quantity);
-
                 // 🔥 registra movimento
-                $movement = $this->logMovement(
-                    stock: $stock,
-                    quantity: $quantity,
-                    direction: 'out',
-                    type: 'consumption',
-                    userId: $userId,
-                    meta: array_merge(['source' => 'manual'], $meta)
-                );
+                $movement =
+                    $this->movementService
+                    ->consume(
+                        stock: $stock,
+                        quantity: $quantity,
+                        userId: $userId,
+                        context: $context,
+                        notes: $notes,
+                        meta: array_merge(
+                            [
+                                'source' => 'manual',
+                            ],
+                            $meta,
+                        ),
+                    );
 
                 $movements[] = $movement;
             }
 
             return ServiceResult::ok($movements);
         });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | MOVEMENT
-    |--------------------------------------------------------------------------
-    */
-    private function logMovement(
-        Stock $stock,
-        float $quantity,
-        string $direction,
-        string $type,
-        ?int $userId = null,
-        array $meta = []
-    ): StockMovement {
-        return StockMovement::create([
-            'uuid' => Str::uuid(),
-            'stock_id' => $stock->id,
-            'product_id' => $stock->product_id,
-            'project_id' => $stock->project_id,
-            'sector_id' => $stock->sector_id,
-            'quantity' => $quantity,
-            'type' => $type,
-            'direction' => $direction,
-            'balance_after' => $stock->stock_quantity,
-            'performed_at' => now(),
-            'user_id' => $userId,
-            'meta' => $meta,
-        ]);
     }
 }

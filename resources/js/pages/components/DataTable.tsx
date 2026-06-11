@@ -82,8 +82,9 @@ export function DataTable<T extends { id: string | number }>({
             setRowSelection(newSelection);
 
             const selectedRows = table
-                .getSelectedRowModel()
+                .getCoreRowModel()
                 .rows
+                .filter((row) => newSelection[row.id])
                 .map((row) => row.original);
 
             onRowSelectionChange?.(selectedRows);
@@ -225,54 +226,61 @@ export function DataTable<T extends { id: string | number }>({
         >
             {/* toolbar */}
             <div
-                className={`flex flex-col gap-4 border-b p-5 lg:flex-row lg:items-center lg:justify-between ${isWarehouse
+                className={`border-b p-5 ${isWarehouse
                     ? 'border-blue-100 bg-white'
                     : 'border-base-200'
                     }`}
             >
-                <div className="relative w-full max-w-md">
-                    <Search
-                        size={18}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
+                <div className="flex items-center justify-between gap-4 overflow-x-auto">
+                    <div className="relative w-full max-w-md shrink-0">
+                        <Search
+                            size={18}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        />
 
-                    <input
-                        value={globalFilter}
-                        onChange={(e) =>
-                            setGlobalFilter(
-                                e.target.value,
-                            )
-                        }
-                        placeholder={
-                            searchPlaceholder
-                        }
-                        className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-blue-500"
-                    />
-                </div>
+                        <input
+                            value={globalFilter}
+                            onChange={(e) =>
+                                setGlobalFilter(
+                                    e.target.value,
+                                )
+                            }
+                            placeholder={
+                                searchPlaceholder
+                            }
+                            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-blue-500"
+                        />
+                    </div>
 
-                <div className="flex flex-wrap items-center gap-2">
-                    <select
-                        value={
-                            table.getState()
-                                .pagination
-                                .pageSize
-                        }
-                        onChange={(e) =>
-                            table.setPageSize(
-                                Number(e.target.value),
-                            )
-                        }
-                        className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 outline-none focus:border-blue-500"
-                    >
-                        {pageSizeOptions.map((size) => (
-                            <option
-                                key={size}
-                                value={size}
-                            >
-                                {size} / página
+                    <div className="flex shrink-0 items-center gap-2">
+                        <select
+                            value={
+                                table.getState().pagination.pageSize === Number.MAX_SAFE_INTEGER
+                                    ? 0
+                                    : table.getState().pagination.pageSize
+                            }
+                            onChange={(e) => {
+                                const val = Number(e.target.value);
+                                table.setPageSize(
+                                    val === 0
+                                        ? Number.MAX_SAFE_INTEGER
+                                        : val,
+                                );
+                            }}
+                            className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 outline-none focus:border-blue-500"
+                        >
+                            {pageSizeOptions.map((size) => (
+                                <option
+                                    key={size}
+                                    value={size}
+                                >
+                                    {size} / página
+                                </option>
+                            ))}
+                            <option value={0}>
+                                Todos
                             </option>
-                        ))}
-                    </select>
+                        </select>
                     {enableExport && (
                         <>
                             <button
@@ -352,11 +360,12 @@ export function DataTable<T extends { id: string | number }>({
                         ),
                     )}
                 </div>
+                </div>
             </div>
 
             {/* table */}
             <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="min-w-max w-full text-sm">
                     <thead
                         className={
                             isWarehouse
@@ -377,11 +386,31 @@ export function DataTable<T extends { id: string | number }>({
                                     >
                                         {enableRowSelection && (
                                             <th className="w-10 px-4 py-4">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={table.getIsAllPageRowsSelected()}
-                                                    onChange={table.getToggleAllPageRowsSelectedHandler()}
-                                                />
+                                                <div
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        const handler = table.getToggleAllPageRowsSelectedHandler();
+                                                        if (typeof handler === 'function') handler(e as any);
+                                                    }}
+                                                    className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded border-2 transition-colors ${
+                                                        table.getIsAllPageRowsSelected()
+                                                            ? 'border-blue-600 bg-blue-600'
+                                                            : table.getIsSomePageRowsSelected()
+                                                                ? 'border-blue-400 bg-blue-100'
+                                                                : 'border-gray-300 bg-white hover:border-blue-400'
+                                                    }`}
+                                                >
+                                                    {table.getIsAllPageRowsSelected() && (
+                                                        <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">
+                                                            <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    )}
+                                                    {!table.getIsAllPageRowsSelected() && table.getIsSomePageRowsSelected() && (
+                                                        <svg className="h-3 w-3 text-blue-600" viewBox="0 0 12 12" fill="none">
+                                                            <path d="M2 6h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                                        </svg>
+                                                    )}
+                                                </div>
                                             </th>
                                         )}
 
@@ -416,18 +445,35 @@ export function DataTable<T extends { id: string | number }>({
                             .getRowModel()
                             .rows.map((row) => (
                                 <tr
-                                    key={
-                                        row.original.id
-                                    }
-                                    className="border-b hover:bg-gray-50"
+                                    key={row.original.id}
+                                    onClick={() => enableRowSelection && row.toggleSelected()}
+                                    className={`border-b transition-colors ${
+                                        enableRowSelection ? 'cursor-pointer' : ''
+                                    } ${
+                                        row.getIsSelected()
+                                            ? 'bg-blue-50 hover:bg-blue-100'
+                                            : 'hover:bg-gray-50'
+                                    }`}
                                 >
                                     {enableRowSelection && (
-                                        <td className="px-4 py-4">
-                                            <input
-                                                type="checkbox"
-                                                checked={row.getIsSelected()}
-                                                onChange={row.getToggleSelectedHandler()}
-                                            />
+                                        <td
+                                            className="px-4 py-4"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <div
+                                                onClick={row.getToggleSelectedHandler()}
+                                                className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded border-2 transition-colors ${
+                                                    row.getIsSelected()
+                                                        ? 'border-blue-600 bg-blue-600'
+                                                        : 'border-gray-300 bg-white hover:border-blue-400'
+                                                }`}
+                                            >
+                                                {row.getIsSelected() && (
+                                                    <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">
+                                                        <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                )}
+                                            </div>
                                         </td>
                                     )}
 
@@ -460,7 +506,7 @@ export function DataTable<T extends { id: string | number }>({
             </div>
 
             {/* footer */}
-            <div className="flex flex-col gap-4 border-t border-gray-100 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 px-5 py-4">
                 <span className="text-sm text-gray-600">
                     {
                         table

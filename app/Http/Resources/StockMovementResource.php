@@ -15,7 +15,7 @@ class StockMovementResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $typeEnum = StockMovementTypeEnum::from($this->type);
+        // $typeEnum = StockMovementTypeEnum::from($this->type);
 
         return [
             'id' => $this->id,
@@ -23,8 +23,8 @@ class StockMovementResource extends JsonResource
             'type' => $this->type,
             'direction' => $this->direction,
 
-            'label' => $typeEnum->label(),
-            'display_type' => $typeEnum->isEntry() ? 'in' : 'out',
+            'label' => $this->type->label(),
+            'display_type' => $this->type->isEntry() ? 'in' : 'out',
 
             'product' => [
                 'id' => $this->product_id,

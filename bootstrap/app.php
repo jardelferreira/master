@@ -47,10 +47,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
 
             // Tenant
-            //$guard = $e->guards()[0] ?? null;
-            // if ($guard === 'tenant') {
-            //     return redirect()->guest(route('tenant.login'));
-            // }
+            $guard = $e->guards()[0] ?? null;
+            if ($guard === 'warehouse') {
+                return redirect()->guest(route('warehouse.login'));
+            }
             // Admin
             return redirect()->guest(route('login'));
         });
