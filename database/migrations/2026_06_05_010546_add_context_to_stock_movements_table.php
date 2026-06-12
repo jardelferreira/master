@@ -18,14 +18,6 @@ return new class extends Migration
             ) {
 
                 $table->foreignId(
-                    'project_id'
-                )
-                    ->nullable()
-                    ->after('stock_id')
-                    ->constrained()
-                    ->nullOnDelete();
-
-                $table->foreignId(
                     'team_id'
                 )
                     ->nullable()

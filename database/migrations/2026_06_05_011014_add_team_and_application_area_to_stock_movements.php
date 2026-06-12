@@ -21,17 +21,6 @@ return new class extends Migration
                     ->constrained()
                     ->nullOnDelete();
 
-                $table->foreignId('team_id')
-                    ->nullable()
-                    ->after('project_id')
-                    ->constrained()
-                    ->nullOnDelete();
-
-                $table->foreignId('application_area_id')
-                    ->nullable()
-                    ->after('team_id')
-                    ->constrained()
-                    ->nullOnDelete();
 
                 $table->foreignId('leader_employee_id')
                     ->nullable()
