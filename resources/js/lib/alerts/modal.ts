@@ -1,6 +1,6 @@
 import { Alert } from '../alert';
 import { AlertStatus } from '@/types/alert';
-import { ICON_MAP, TITLE_MAP } from '@/types/alert';
+import { ICON_MAP,TITLE_MAP } from '@/types/alert';
 
 export function showAlert(
     status: AlertStatus,
