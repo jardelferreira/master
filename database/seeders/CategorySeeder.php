@@ -3,21 +3,57 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-   public function run(): void
+    public function run(): void
     {
         $categories = [
+
+            [
+                'name' => 'Civil',
+                'description' => 'Materiais e componentes da construção civil',
+                'meta' => [
+                    'sector' => 'civil',
+                    'icon' => 'building',
+                    'color' => '#78716c',
+                ],
+                'children' => [
+                    'Cimento e Argamassas',
+                    'Agregados',
+                    'Blocos e Tijolos',
+                    'Estruturas de Concreto',
+                    'Ferragens',
+                    'Impermeabilização',
+                    'Pré-Moldados',
+                    'Coberturas',
+                ],
+            ],
+
+            [
+                'name' => 'Hidráulica',
+                'description' => 'Sistemas hidráulicos, saneamento e drenagem',
+                'meta' => [
+                    'sector' => 'hidraulica',
+                    'icon' => 'droplets',
+                    'color' => '#0284c7',
+                ],
+                'children' => [
+                    'Tubos',
+                    'Conexões',
+                    'Registros',
+                    'Válvulas',
+                    'Reservatórios',
+                    'Esgoto',
+                    'Drenagem',
+                    'Acessórios Hidráulicos',
+                ],
+            ],
+
             [
                 'name' => 'Elétrica',
-                'description' => 'Materiais e equipamentos para instalações elétricas',
+                'description' => 'Materiais e equipamentos elétricos',
                 'meta' => [
                     'sector' => 'eletrica',
                     'icon' => 'zap',
@@ -28,53 +64,123 @@ class CategorySeeder extends Seeder
                     'Disjuntores',
                     'Quadros Elétricos',
                     'Tomadas e Interruptores',
-                    'Eletrodutos e Conduítes',
-                    'Luminárias',
+                    'Eletrodutos',
+                    'Iluminação',
                     'Transformadores',
-                    'Ferramentas Elétricas',
+                    'Aterramento',
+                    'Proteção Elétrica',
+                ],
+            ],
+
+            [
+                'name' => 'Mecânica',
+                'description' => 'Componentes e equipamentos mecânicos',
+                'meta' => [
+                    'sector' => 'mecanica',
+                    'icon' => 'cog',
+                    'color' => '#475569',
+                ],
+                'children' => [
+                    'Bombas',
+                    'Motores',
+                    'Rolamentos',
+                    'Acoplamentos',
+                    'Correias',
+                    'Transmissão',
+                    'Componentes Mecânicos',
+                    'Peças de Reposição',
+                ],
+            ],
+
+            [
+                'name' => 'Automação e Instrumentação',
+                'description' => 'Automação industrial e instrumentação',
+                'meta' => [
+                    'sector' => 'automacao',
+                    'icon' => 'cpu',
+                    'color' => '#2563eb',
+                ],
+                'children' => [
+                    'Sensores',
+                    'Instrumentação',
+                    'Controladores',
+                    'Automação Industrial',
                     'Equipamentos de Medição',
                 ],
             ],
 
             [
-                'name' => 'Civil',
-                'description' => 'Materiais para construção civil e infraestrutura',
+                'name' => 'Esquadrias e Acabamentos',
+                'description' => 'Portas, janelas e materiais de acabamento',
                 'meta' => [
-                    'sector' => 'civil',
-                    'icon' => 'building',
-                    'color' => '#78716c',
+                    'sector' => 'acabamentos',
+                    'icon' => 'door-open',
+                    'color' => '#8b5e3c',
                 ],
                 'children' => [
-                    'Cimento e Argamassa',
-                    'Areia e Brita',
-                    'Blocos e Tijolos',
-                    'Tubulações Hidráulicas',
-                    'Conexões',
-                    'Impermeabilização',
-                    'Ferragens',
-                    'Madeiras',
-                    'Ferramentas de Obra',
+                    'Portas',
+                    'Batentes',
+                    'Janelas',
+                    'Ferragens para Esquadrias',
+                    'Rodapés',
+                    'Soleiras',
+                    'Revestimentos',
+                    'Acabamentos Gerais',
                 ],
             ],
 
             [
-                'name' => 'Engenharia',
-                'description' => 'Materiais técnicos e operacionais de engenharia',
+                'name' => 'Tintas e Revestimentos',
+                'description' => 'Tintas, resinas e revestimentos especiais',
                 'meta' => [
-                    'sector' => 'engenharia',
-                    'icon' => 'cpu',
-                    'color' => '#2563eb',
+                    'sector' => 'pintura',
+                    'icon' => 'paintbrush',
+                    'color' => '#7c3aed',
                 ],
                 'children' => [
-                    'Instrumentação',
-                    'Automação',
-                    'Sensores',
-                    'Válvulas',
-                    'Bombas',
-                    'Motores',
-                    'Rolamentos',
-                    'Acoplamentos',
-                    'Peças Técnicas',
+                    'Tintas',
+                    'Primers',
+                    'Resinas',
+                    'Revestimentos Epóxi',
+                    'Selantes',
+                    'Aditivos',
+                ],
+            ],
+
+            [
+                'name' => 'Ferramentas',
+                'description' => 'Ferramentas manuais e elétricas',
+                'meta' => [
+                    'sector' => 'ferramentas',
+                    'icon' => 'hammer',
+                    'color' => '#374151',
+                ],
+                'children' => [
+                    'Ferramentas Manuais',
+                    'Ferramentas Elétricas',
+                    'Ferramentas Pneumáticas',
+                    'Ferramentas de Corte',
+                    'Ferramentas de Medição',
+                    'Kits de Ferramentas',
+                ],
+            ],
+
+            [
+                'name' => 'Máquinas e Equipamentos',
+                'description' => 'Equipamentos de obra e operação',
+                'meta' => [
+                    'sector' => 'equipamentos',
+                    'icon' => 'truck',
+                    'color' => '#0f766e',
+                ],
+                'children' => [
+                    'Equipamentos de Obra',
+                    'Equipamentos Hidráulicos',
+                    'Geradores',
+                    'Compressores',
+                    'Equipamentos de Protensão',
+                    'Equipamentos de Elevação',
+                    'Equipamentos de Medição',
                 ],
             ],
 
@@ -89,38 +195,35 @@ class CategorySeeder extends Seeder
                 'children' => [
                     'EPIs',
                     'EPCs',
-                    'Sinalização de Segurança',
-                    'Combate a Incêndio',
-                    'Kit Primeiros Socorros',
                     'Proteção Respiratória',
                     'Proteção Auditiva',
-                    'Proteção contra Queda',
+                    'Proteção Contra Queda',
+                    'Sinalização',
                 ],
             ],
 
             [
-                'name' => 'Ferramentas',
-                'description' => 'Ferramentas manuais e operacionais',
+                'name' => 'Combate a Incêndio',
+                'description' => 'Equipamentos e materiais de combate a incêndio',
                 'meta' => [
-                    'sector' => 'geral',
-                    'icon' => 'hammer',
-                    'color' => '#374151',
+                    'sector' => 'incendio',
+                    'icon' => 'flame',
+                    'color' => '#b91c1c',
                 ],
                 'children' => [
-                    'Ferramentas Manuais',
-                    'Ferramentas de Corte',
-                    'Ferramentas de Medição',
-                    'Ferramentas Elétricas',
-                    'Ferramentas Pneumáticas',
-                    'Kits de Ferramentas',
+                    'Extintores',
+                    'Mangueiras',
+                    'Hidrantes',
+                    'Abrigos',
+                    'Acessórios Contra Incêndio',
                 ],
             ],
 
             [
                 'name' => 'Consumíveis',
-                'description' => 'Itens de consumo recorrente',
+                'description' => 'Materiais de consumo recorrente',
                 'meta' => [
-                    'sector' => 'geral',
+                    'sector' => 'consumiveis',
                     'icon' => 'package',
                     'color' => '#16a34a',
                 ],
@@ -128,11 +231,28 @@ class CategorySeeder extends Seeder
                     'Parafusos e Fixadores',
                     'Abraçadeiras',
                     'Fitas',
-                    'Adesivos e Selantes',
+                    'Adesivos',
                     'Lubrificantes',
-                    'Discos de Corte',
                     'Lixas',
+                    'Discos de Corte',
                     'Soldagem',
+                    'Produtos Químicos',
+                ],
+            ],
+
+            [
+                'name' => 'Paisagismo',
+                'description' => 'Itens de jardinagem e paisagismo',
+                'meta' => [
+                    'sector' => 'paisagismo',
+                    'icon' => 'trees',
+                    'color' => '#15803d',
+                ],
+                'children' => [
+                    'Plantas',
+                    'Gramas',
+                    'Jardinagem',
+                    'Irrigação',
                 ],
             ],
 
@@ -154,25 +274,25 @@ class CategorySeeder extends Seeder
             ],
 
             [
-                'name' => 'Manutenção',
-                'description' => 'Itens voltados para manutenção corretiva e preventiva',
+                'name' => 'Serviços e Mão de Obra',
+                'description' => 'Profissionais e serviços especializados',
                 'meta' => [
-                    'sector' => 'manutencao',
-                    'icon' => 'wrench',
-                    'color' => '#0f766e',
+                    'sector' => 'servicos',
+                    'icon' => 'users',
+                    'color' => '#6366f1',
                 ],
                 'children' => [
-                    'Peças de Reposição',
-                    'Correias',
-                    'Lubrificação',
-                    'Fixação',
-                    'Vedação',
-                    'Componentes Mecânicos',
+                    'Engenharia',
+                    'Topografia',
+                    'Administrativo',
+                    'Operacional',
+                    'Técnicos Especializados',
                 ],
             ],
         ];
 
         foreach ($categories as $categoryData) {
+
             $parent = Category::create([
                 'name' => $categoryData['name'],
                 'description' => $categoryData['description'],
@@ -181,6 +301,7 @@ class CategorySeeder extends Seeder
             ]);
 
             foreach ($categoryData['children'] as $childName) {
+
                 Category::create([
                     'name' => $childName,
                     'parent_id' => $parent->id,
