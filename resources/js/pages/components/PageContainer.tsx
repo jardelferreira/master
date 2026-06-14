@@ -3,8 +3,8 @@ import React from 'react';
 
 export function PageContainer({ children }: { children: React.ReactNode }) {
     return (
-        <div className="relative overflow-hidden px-6 py-8 sm:px-8">
-            <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <div className="relative overflow-hidden p-4">
+            <div className="relative flex w-full flex-col gap-6">
                 {children}
             </div>
         </div>

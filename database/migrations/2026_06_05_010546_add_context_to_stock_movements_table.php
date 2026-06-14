@@ -41,8 +41,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('stock_movements', function (Blueprint $table) {
-            //
-        });
+        Schema::table(
+            'stock_movements',
+            function (Blueprint $table) {
+                $table->dropConstrainedForeignId('team_id');
+                $table->dropConstrainedForeignId('application_area_id');
+            }
+        );
     }
 };

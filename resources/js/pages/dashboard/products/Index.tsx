@@ -97,12 +97,8 @@ export default function ProductsIndex() {
 
                 return (
                     <div>
-                        <p className="font-medium text-base-900">
+                        <p className="font-bold">
                             {p.name}
-                        </p>
-
-                        <p className="text-xs text-base-400">
-                            {p.slug}
                         </p>
                     </div>
                 );
@@ -268,7 +264,6 @@ export default function ProductsIndex() {
 
             <PageContainer>
                 <PageCard>
-                    <section className="rounded-[28px] border border-slate-200 bg-white/90 p-3 shadow-[0_18px_45px_rgba(15,23,42,0.06)] backdrop-blur">
                         <DataTable<Product>
                             data={products}
                             columns={columns}
@@ -290,7 +285,6 @@ export default function ProductsIndex() {
                                 },
                             ]}
                         />
-                    </section>
                 </PageCard>
             </PageContainer>
 

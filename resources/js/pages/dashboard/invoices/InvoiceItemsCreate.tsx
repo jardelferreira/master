@@ -38,6 +38,12 @@ type Props = {
     products: Product[];
 };
 
+type ProductOption = {
+    value: number;
+    label: string;
+    product: Product;
+};
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const makeKey = () => Math.random().toString(36).slice(2);
@@ -278,23 +284,39 @@ function ItemRowForm({
             </div>
 
             {/* ── Row Fields ── */}
+
+
             <div className="space-y-5 p-5">
 
-                <AsyncSelect
-                    styles={selectStyles}
-                    menuPortalTarget={document.body}
+                <Field
+                    label="Produto"
+                    required
+                    error={err("product_id")}
+                >
+                    <AsyncSelect<ProductOption, false>
+                        styles={selectStyles}
+                        menuPortalTarget={document.body}
+                        cacheOptions
+                        defaultOptions
 
-                    cacheOptions
-                    defaultOptions
-                    loadOptions={async (
-                        inputValue
-                    ) => {
+                        value={
+                            row.product_id
+                                ? {
+                                    value: Number(row.product_id),
+                                    label: row.product_name,
+                                    product: {
+                                        id: Number(row.product_id),
+                                        name: row.product_name,
+                                        unit: row.unit,
+                                    } as Product,
+                                }
+                                : null
+                        }
 
-                        const response =
-                            await axios.get(
-                                route(
-                                    "admin.products.search"
-                                ),
+                        loadOptions={async (inputValue) => {
+
+                            const response = await axios.get(
+                                route("admin.products.search"),
                                 {
                                     params: {
                                         q: inputValue,
@@ -302,34 +324,62 @@ function ItemRowForm({
                                 }
                             );
 
-                        return response.data.map(
-                            (product: Product) => ({
-                                value: product.id,
-                                label: product.name,
-                                unit: product.unit,
-                            })
-                        );
-                    }
-                    }
-                />
-                {/* Produto */}
-                <Field label="Produto" required error={err("product_id")}>
-                    <SelectWrapper>
-                        <select
-                            value={row.product_id}
-                            onChange={handleProductChange}
-                            className={selectBase}
-                        >
-                            <option value="">Selecione um produto</option>
-                            {products.map((p) => (
-                                <option key={p.id} value={p.id}>
-                                    {p.name}
-                                </option>
-                            ))}
-                        </select>
-                    </SelectWrapper>
-                </Field>
+                            return response.data.map(
+                                (product: Product) => ({
+                                    value: product.id,
+                                    label: product.name,
+                                    product,
+                                })
+                            );
+                        }}
 
+                        onChange={(option) => {
+
+                            if (!option) {
+
+                                onChange(
+                                    row._key,
+                                    "product_id",
+                                    ""
+                                );
+
+                                onChange(
+                                    row._key,
+                                    "product_name",
+                                    ""
+                                );
+
+                                onChange(
+                                    row._key,
+                                    "unit",
+                                    ""
+                                );
+
+                                return;
+                            }
+
+                            const product = option.product;
+
+                            onChange(
+                                row._key,
+                                "product_id",
+                                String(product.id)
+                            );
+
+                            onChange(
+                                row._key,
+                                "product_name",
+                                product.name
+                            );
+
+                            onChange(
+                                row._key,
+                                "unit",
+                                product.unit
+                            );
+                        }}
+                    />
+                </Field>
                 {/* Descrição */}
                 <Field
                     label="Descrição"
