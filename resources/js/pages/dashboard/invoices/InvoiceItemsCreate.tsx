@@ -3,6 +3,8 @@ import { useState, useCallback, useMemo } from "react";
 import DashboardLayout from "@/pages/layouts/dashboard/DashboardLayout";
 import { PageContainer } from "@/pages/components/PageContainer";
 import { PageCard } from "@/pages/components/PageCard";
+import AsyncSelect from 'react-select/async';
+import axios from "axios";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -57,10 +59,10 @@ const fmt = (n: number) =>
     n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 function calcTotal(row: ItemRow): number {
-    const qty      = parseFloat(row.quantity)   || 0;
-    const price    = parseFloat(row.unit_price) || 0;
-    const discount = parseFloat(row.discount)   || 0;
-    const tax      = parseFloat(row.tax)        || 0;
+    const qty = parseFloat(row.quantity) || 0;
+    const price = parseFloat(row.unit_price) || 0;
+    const discount = parseFloat(row.discount) || 0;
+    const tax = parseFloat(row.tax) || 0;
     return qty * price - discount + tax;
 }
 
@@ -70,6 +72,63 @@ const inputBase =
     "w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-slate-100";
 
 const selectBase = `${inputBase} cursor-pointer appearance-none`;
+
+const selectStyles = {
+    control: (base: any, state: any) => ({
+        ...base,
+        minHeight: '46px',
+        borderRadius: '0.75rem',
+        borderColor: state.isFocused
+            ? '#3b82f6'
+            : '#cbd5e1',
+        boxShadow: state.isFocused
+            ? '0 0 0 4px rgba(59,130,246,0.15)'
+            : 'none',
+        '&:hover': {
+            borderColor: '#3b82f6',
+        },
+        fontSize: '0.875rem',
+        fontWeight: 500,
+
+    }),
+
+    menu: (base: any) => ({
+        ...base,
+        borderRadius: '0.75rem',
+        overflow: 'hidden',
+        zIndex: 9999,
+    }),
+
+    menuPortal: (base: any) => ({
+        ...base,
+        zIndex: 9999,
+    }),
+
+    option: (base: any, state: any) => ({
+        ...base,
+        backgroundColor: state.isSelected
+            ? '#2563eb'
+            : state.isFocused
+                ? '#eff6ff'
+                : '#fff',
+
+        color: state.isSelected
+            ? '#fff'
+            : '#334155',
+
+        cursor: 'pointer',
+    }),
+
+    placeholder: (base: any) => ({
+        ...base,
+        color: '#94a3b8',
+    }),
+
+    singleValue: (base: any) => ({
+        ...base,
+        color: '#0f172a',
+    }),
+};
 
 function Field({
     label,
@@ -221,6 +280,38 @@ function ItemRowForm({
             {/* ── Row Fields ── */}
             <div className="space-y-5 p-5">
 
+                <AsyncSelect
+                    styles={selectStyles}
+                    menuPortalTarget={document.body}
+
+                    cacheOptions
+                    defaultOptions
+                    loadOptions={async (
+                        inputValue
+                    ) => {
+
+                        const response =
+                            await axios.get(
+                                route(
+                                    "admin.products.search"
+                                ),
+                                {
+                                    params: {
+                                        q: inputValue,
+                                    },
+                                }
+                            );
+
+                        return response.data.map(
+                            (product: Product) => ({
+                                value: product.id,
+                                label: product.name,
+                                unit: product.unit,
+                            })
+                        );
+                    }
+                    }
+                />
                 {/* Produto */}
                 <Field label="Produto" required error={err("product_id")}>
                     <SelectWrapper>
@@ -333,7 +424,7 @@ function ItemRowForm({
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 

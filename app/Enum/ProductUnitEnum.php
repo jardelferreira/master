@@ -27,6 +27,18 @@ enum ProductUnitEnum: string
 
     case PACK = 'pkg';
 
+    case HOUR = 'h';
+    case DAY = 'dia';
+    case MONTH = 'mes';
+
+    case SET = 'cj';
+    case GAME = 'jg';
+
+    case HUNDRED = 'cento';
+    case THOUSAND = 'mil';
+
+    case KWH = 'kwh';
+
 
     public function label(): string
     {
@@ -48,6 +60,17 @@ enum ProductUnitEnum: string
             self::M2     => 'Metro Quadrado',
             self::M3     => 'Metro Cúbico',
             self::TON   => 'Toneladas',
+            self::HOUR => 'Hora',
+            self::DAY => 'Dia',
+            self::MONTH => 'Mês',
+
+            self::SET => 'Conjunto',
+            self::GAME => 'Jogo',
+
+            self::HUNDRED => 'Cento',
+            self::THOUSAND => 'Mil',
+
+            self::KWH => 'kWh',
         };
     }
 }

@@ -121,6 +121,7 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('admin')->name('admin.')-
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
 
+            Route::get('/search', 'search')->name('search');
             Route::get('/{product}', 'show')->name('show');
             Route::put('/{product}', 'update')->name('update');
             Route::delete('/{product}', 'destroy')->name('destroy');

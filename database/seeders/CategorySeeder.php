@@ -291,6 +291,16 @@ class CategorySeeder extends Seeder
             ],
         ];
 
+        Category::create([
+                'name' => 'Importado SINAPI',
+                'description' => 'Produtos importados do SINAPI aguardando categorização',
+                'meta' => [
+                    'sector' => 'sinapi',
+                    'icon' => 'database',
+                    'color' => '#64748b',
+                ],
+            ],);
+
         foreach ($categories as $categoryData) {
 
             $parent = Category::create([

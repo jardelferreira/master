@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Project;
 use App\Models\Sector;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -28,7 +29,6 @@ class ProductController extends Controller
                 'stockMinimals',
             ])
             ->withSum('stocks', 'stock_quantity')
-            ->latest()
             ->get()
             ->map(fn(Product $product) => [
                 'id' => $product->id,
@@ -192,5 +192,22 @@ class ProductController extends Controller
             'success',
             'Status do produto atualizado.'
         );
+    }
+
+    public function search(Request $request)
+    {
+        return Product::query()
+            ->where(
+                'name',
+                'ilike',
+                "%{$request->q}%"
+            )
+            ->orderBy('name','ASC')
+            ->limit(20)
+            ->get([
+                'id',
+                'name',
+                'unit',
+            ]);
     }
 }
