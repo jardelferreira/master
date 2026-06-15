@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('web')->group(base_path('routes/auth.php'));
             Route::middleware('web')->group(base_path('routes/admin.php'));
             Route::middleware('web')->group(base_path('routes/warehouse.php'));
+            Route::middleware('web')->group(base_path('routes/stock.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -50,6 +51,9 @@ return Application::configure(basePath: dirname(__DIR__))
             $guard = $e->guards()[0] ?? null;
             if ($guard === 'warehouse') {
                 return redirect()->guest(route('warehouse.login'));
+            }
+            if ($guard === 'stock') {
+                return redirect()->guest(route('stock.login'));
             }
             // Admin
             return redirect()->guest(route('login'));

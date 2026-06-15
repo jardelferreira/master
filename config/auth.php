@@ -46,6 +46,10 @@ return [
             'driver' => 'session',
             'provider' => 'warehouse_users',
         ],
+        'stock' => [
+            'driver' => 'session',
+            'provider' => 'stock_users',
+        ],
 
     ],
 
@@ -72,6 +76,10 @@ return [
             'model' => env('AUTH_MODEL', User::class),
         ],
         'warehouse_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+        'stock_users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],

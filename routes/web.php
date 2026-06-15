@@ -20,7 +20,9 @@ Route::middleware('auth')->group(function (): void {
 });
 Route::get('flow', [FlowInvoiceController::class, 'run']);
 Route::get('/teste', function () {
-    dd(Sector::find(7)->load('project'));
+    // dd(Sector::find(7)->load('project'));
+    $user = User::where("email",'isaque@mail')->first();
+    $user->assignRole('super.admin');
 // Auth::user()->assignRole('super.admin');
 // Auth::user()->projects()->syncWithoutDetaching([1]);
 

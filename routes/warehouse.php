@@ -10,7 +10,7 @@ Route::prefix('warehouse')
     ->name('warehouse.')
     ->group(function () {
 
-        Route::middleware('warehouse')->group(function () {
+        Route::middleware('guest:warehouse')->group(function () {
             Route::get('/login', [WarehouseAuthController::class, 'create'])
                 ->name('login');
 

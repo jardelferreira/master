@@ -224,9 +224,9 @@ class StockController extends Controller
         );
 
         $applicationArea = ApplicationArea::findOrFail(
-                $data['application_area_id']
-            );
-            
+            $data['application_area_id']
+        );
+
         $context =
             $this->contextResolver
             ->buildConsumptionContext(
@@ -261,5 +261,22 @@ class StockController extends Controller
         return $this->success(
             'Baixa registrada com sucesso'
         );
+    }
+
+
+    public function projectStock(Project $project)
+    {
+
+        $stocks = $project->load(['stocks' => [
+            'invoiceItem',
+            'product',
+            'sector',
+            'invoice',
+            'movements'
+        ]]);
+
+        dd($stocks->toArray());
+
+        return Inertia::render('stock/Index', []);
     }
 }
