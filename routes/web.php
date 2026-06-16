@@ -18,6 +18,14 @@ Route::inertia('/', 'welcome')->name('home');
 Route::middleware('auth')->group(function (): void {
     Route::inertia('/home', 'Dashboard')->name('dashboard');
 });
+Route::get('/debug-scheme', function () {
+    return [
+        'secure' => request()->secure(),
+        'scheme' => request()->getScheme(),
+        'url' => url('/'),
+        'app_url' => config('app.url'),
+    ];
+});
 Route::get('flow', [FlowInvoiceController::class, 'run']);
 Route::get('/teste', function () {
     // dd(Sector::find(7)->load('project'));
