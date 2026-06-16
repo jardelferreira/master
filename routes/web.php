@@ -26,6 +26,10 @@ Route::get('/debug-scheme', function () {
         'app_url' => config('app.url'),
     ];
 });
+
+Route::get('/debug-headers', function () {
+    return request()->headers->all();
+});
 Route::get('flow', [FlowInvoiceController::class, 'run']);
 Route::get('/teste', function () {
     // dd(Sector::find(7)->load('project'));
