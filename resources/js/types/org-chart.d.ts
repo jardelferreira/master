@@ -12,8 +12,8 @@ export type OrgChartNode = {
         id: number;
         name: string;
     }[];
-    members_count: number;
-    children_count: number;
+    membersCount: number;
+    childrenCount: number;
 
     children: OrgChartNode[];
 };

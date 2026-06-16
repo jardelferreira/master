@@ -201,6 +201,8 @@ class TeamController extends Controller
             ->whereNull('parent_id')
             ->get();
 
+        // dd($this->buildOrgChart($teams));
+
         return Inertia::render(
             'dashboard/teams/org-chart/Index',
             [

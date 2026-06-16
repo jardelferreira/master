@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Provider;
 use App\Models\Sector;
 use App\Models\Stock;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -33,8 +34,8 @@ Route::get('/debug-headers', function () {
 Route::get('flow', [FlowInvoiceController::class, 'run']);
 Route::get('/teste', function () {
     // dd(Sector::find(7)->load('project'));
-    $user = User::where("email",'isaque@mail')->first();
-    $user->assignRole('super.admin');
+    $team = Team::first();
+    dd($team->children()->count());
 // Auth::user()->assignRole('super.admin');
 // Auth::user()->projects()->syncWithoutDetaching([1]);
 

@@ -155,7 +155,7 @@ export default function Index({
         () => {
             window.print();
         };
-
+        console.log(selectedTeam)
     return (
         <DashboardLayout>
             <Head title="Organograma Corporativo" />
@@ -305,7 +305,7 @@ export default function Index({
                                 <div className="rounded-lg border p-3 text-center">
                                     <div className="text-xl font-bold">
                                         {
-                                            selectedTeam.children_count
+                                            selectedTeam.childrenCount
                                         }
                                     </div>
 
