@@ -17,6 +17,7 @@ import DashboardLayout from '@/pages/layouts/dashboard/DashboardLayout';
 import TeamNode from './TeamNode';
 
 import { buildNodes } from './buildNodes';
+import { getLayoutedElements } from './getLayoutedElements';
 
 import {
     buildEdges,
@@ -33,11 +34,13 @@ type Props = {
 export default function Index({
     tree,
 }: Props) {
-    const nodes =
-        buildNodes(tree);
+    const rawNodes = buildNodes(tree);
+    const rawEdges = buildEdges(tree);
 
-    const edges =
-        buildEdges(tree);
+    const { nodes, edges } = getLayoutedElements(
+        rawNodes,
+        rawEdges,
+    );
 
     const [
         selectedTeam,

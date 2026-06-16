@@ -12,8 +12,8 @@ dagreGraph.setDefaultEdgeLabel(
     () => ({})
 );
 
-const nodeWidth = 320;
-const nodeHeight = 180;
+const nodeWidth = 380;
+const nodeHeight = 140;
 
 export function getLayoutedElements(
     nodes: Node[],
@@ -21,8 +21,8 @@ export function getLayoutedElements(
 ) {
     dagreGraph.setGraph({
         rankdir: 'TB',
-        ranksep: 120,
-        nodesep: 60,
+        ranksep: 220,
+        nodesep: 220,
     });
 
     nodes.forEach((node) => {
