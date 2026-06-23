@@ -33,30 +33,46 @@ Route::prefix('warehouse')
 
             Route::post('/projects/{project}/movements', [WarehouseMovementController::class, 'store'])
                 ->name('projects.movements.store');
-        Route::get(
-            '/projects/{project}/stocks/{stock}/transfer-options',
-            [WarehouseStockController::class, 'transferOptions']
-        )->name('projects.transfer-options');
+            Route::get(
+                '/projects/{project}/stocks/{stock}/transfer-options',
+                [WarehouseStockController::class, 'transferOptions']
+            )->name('projects.transfer-options');
 
-        Route::get(
-            '/projects/{project}/users',
-            [WarehouseDashboardController::class, 'users']
-        )->name('projects.users');
+            Route::get(
+                '/projects/{project}/users',
+                [WarehouseDashboardController::class, 'users']
+            )->name('projects.users');
 
 
-        Route::get(
-            '/projects/{project}/movements',
-            [WarehouseMovementController::class, 'index']
-        )->name('projects.movements.index');
+            Route::get(
+                '/projects/{project}/movements',
+                [WarehouseMovementController::class, 'index']
+            )->name('projects.movements.index');
 
-        Route::get(
-            '/projects/{project}/warehouse/movements/returnable',
-            [
-                WarehouseMovementController::class,
-                'returnableMovements',
-            ]
-        )->name('projects.movements.returnable' );
-
+            Route::get(
+                '/projects/{project}/warehouse/movements/returnable',
+                [
+                    WarehouseMovementController::class,
+                    'returnableMovements',
+                ]
+            )->name('projects.movements.returnable');
         });
-        
     });
+
+use App\Http\Controllers\Warehouse\StockConsultaController;
+
+Route::middleware('auth:stock')->group(function () {
+    Route::prefix('stocks/{project}')
+
+        ->name('warehouse.projects.')
+        ->group(function () {
+
+            // Consulta de estoque (read-only, mobile-first)
+            Route::get('/consulta', [StockConsultaController::class, 'index'])
+                ->name('consulta');
+
+            // AJAX: histórico de movimentações de um produto
+            Route::get('/consulta/movements/{productId}', [StockConsultaController::class, 'movements'])
+                ->name('consulta.movements');
+        });
+});

@@ -155,7 +155,6 @@ export default function Index({
         () => {
             window.print();
         };
-        console.log(selectedTeam)
     return (
         <DashboardLayout>
             <Head title="Organograma Corporativo" />

@@ -29,7 +29,7 @@ export default function TeamNode({
 
             <div className="min-w-[260px] rounded-xl border bg-white shadow">
                 <div className="border-b px-4 py-3 rounded-t-xl bg-blue-600">
-                    <h3 className="font-bold text-center text-white uppercase">
+                    <h3 className="font-bold text-center text-white uppercase   ">
                         {data.name}
                     </h3>
                 </div>

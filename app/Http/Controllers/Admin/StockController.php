@@ -264,18 +264,16 @@ class StockController extends Controller
     }
 
 
-    public function projectStock(Project $project)
+    public function projectStock()
     {
+        $project = Project::first();
 
         $stocks = $project->load(['stocks' => [
             'invoiceItem',
             'product',
             'sector',
-            'invoice',
             'movements'
         ]]);
-
-        dd($stocks->toArray());
 
         return Inertia::render('stock/Index', []);
     }

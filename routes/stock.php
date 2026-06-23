@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Stock\Auth\StockAuthController;
 use App\Http\Controllers\Warehouse\Auth\WarehouseAuthController;
+use App\Http\Controllers\Warehouse\StockConsultaController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('stock')
@@ -19,8 +20,8 @@ Route::prefix('stock')
 
         Route::middleware('auth:stock')->group(function () {
             Route::post('/logout', [StockAuthController::class, 'destroy'])->name('logout');
-            Route::get('{project}/cosulta',[StockController::class,'projectStock'])->name('index');
+            Route::get('', [StockConsultaController::class, 'consultaIndex'])->name('index');
+            Route::get('/projects/{project}/estoque', [StockConsultaController::class, 'index'])
+                ->name('projects.estoque');
         });
-        
     });
-    
