@@ -3,6 +3,7 @@ import FlashMessage from '@/components/alerts/SweetAlertFlashMessage';
 
 import WarehouseHeader from '@/pages/components/warehouse/WarehouseHeader';
 import StockSidebar from '../components/public-stock/StockSidebar';
+import StockConsultaHeader from '../components/warehouse/StockConsultaHeader';
 
 export default function StockLayout({
     children,
@@ -12,7 +13,7 @@ export default function StockLayout({
             <StockSidebar />
 
             <div className="flex flex-1 flex-col">
-                <WarehouseHeader />
+                <StockConsultaHeader />
                 <FlashMessage />
 
                 <main className="flex-1 p-6">
