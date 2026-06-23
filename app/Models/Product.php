@@ -171,4 +171,75 @@ class Product extends Model
 
         return $minStock !== null ? (float) $minStock : null;
     }
+
+    public function getGlobalMinStock2(): ?float
+    {
+        $value = $this->stockMinimals()
+            ->whereNull('project_id')
+            ->whereNull('sector_id')
+            ->value('min_quantity');
+
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function getProjectMinStock(int $projectId): ?float
+    {
+        $value = $this->stockMinimals()
+            ->where('project_id', $projectId)
+            ->whereNull('sector_id')
+            ->value('min_quantity');
+
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function getSectorMinStock(int $sectorId): ?float
+    {
+        $value = $this->stockMinimals()
+            ->where('sector_id', $sectorId)
+            ->value('min_quantity');
+
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function resolveMinStock(
+        ?int $projectId = null,
+        ?int $sectorId = null
+    ): ?float {
+        $query = $this->stockMinimals();
+
+        $query->where(function ($q) use ($projectId, $sectorId) {
+
+            if ($sectorId) {
+                $q->orWhere('sector_id', $sectorId);
+            }
+
+            if ($projectId) {
+                $q->orWhere(function ($q) use ($projectId) {
+                    $q->where('project_id', $projectId)
+                        ->whereNull('sector_id');
+                });
+            }
+
+            $q->orWhere(function ($q) {
+                $q->whereNull('project_id')
+                    ->whereNull('sector_id');
+            });
+        });
+
+        $result = $query
+            ->selectRaw("
+            min_quantity,
+            CASE
+                WHEN sector_id IS NOT NULL THEN 1
+                WHEN project_id IS NOT NULL THEN 2
+                ELSE 3
+            END as priority
+        ")
+            ->orderBy('priority')
+            ->first();
+
+        return $result?->min_quantity !== null
+            ? (float) $result->min_quantity
+            : null;
+    }
 }

@@ -64,7 +64,7 @@ class StockConsultaController extends Controller
             ->get()
             ->map(function ($stock) use ($project) {
                 $product = $stock->product;
-                $minQty  = $product->getMinStockForSector($stock->sector_id);
+                $minQty  = $product->resolveMinStock(sectorId: $stock->sector_id);
 
                 $status = match (true) {
                     $stock->total_quantity <= 0                              => 'empty',
