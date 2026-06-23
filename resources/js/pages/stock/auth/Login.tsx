@@ -104,7 +104,7 @@ export default function StockLogin() {
                             {/* MOBILE LOGO */}
                             <div className="mb-8 flex justify-center lg:hidden">
                                 <img
-                                    src="/images/planes-logo-invertida.svg"
+                                    src="/images/planes-logo.svg"
                                     alt="Planes Engenharia"
                                     className="h-16 w-auto"
                                 />
