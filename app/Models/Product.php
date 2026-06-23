@@ -35,6 +35,8 @@ class Product extends Model
         'unit' => ProductUnitEnum::class,
     ];
 
+    protected ?array $minStockIndex = null;
+
     protected static function booted(): void
     {
         static::creating(function (Product $product) {
@@ -172,7 +174,7 @@ class Product extends Model
         return $minStock !== null ? (float) $minStock : null;
     }
 
-    public function getGlobalMinStock2(): ?float
+    protected function getGlobalMinStock2(): ?float
     {
         $value = $this->stockMinimals()
             ->whereNull('project_id')
@@ -182,7 +184,7 @@ class Product extends Model
         return $value !== null ? (float) $value : null;
     }
 
-    public function getProjectMinStock(int $projectId): ?float
+    protected function getProjectMinStock(int $projectId): ?float
     {
         $value = $this->stockMinimals()
             ->where('project_id', $projectId)
@@ -192,7 +194,7 @@ class Product extends Model
         return $value !== null ? (float) $value : null;
     }
 
-    public function getSectorMinStock(int $sectorId): ?float
+    protected function getSectorMinStock(int $sectorId): ?float
     {
         $value = $this->stockMinimals()
             ->where('sector_id', $sectorId)
@@ -241,5 +243,57 @@ class Product extends Model
         return $result?->min_quantity !== null
             ? (float) $result->min_quantity
             : null;
+    }
+
+    public function resolveLoadedMinStock(
+        ?int $projectId = null,
+        ?int $sectorId = null
+    ): ?float {
+
+        $index = $this->getMinStockIndex();
+
+        if (
+            $sectorId &&
+            isset($index["sector:$sectorId"])
+        ) {
+            return (float) $index["sector:$sectorId"];
+        }
+
+        if (
+            $projectId &&
+            isset($index["project:$projectId"])
+        ) {
+            return (float) $index["project:$projectId"];
+        }
+
+        return isset($index['global'])
+            ? (float) $index['global']
+            : null;
+    }
+
+    public function getMinStockIndex(): array
+    {
+        if ($this->minStockIndex !== null) {
+            return $this->minStockIndex;
+        }
+
+        return $this->minStockIndex =
+            $this->stockMinimals
+            ->mapWithKeys(function ($item) {
+
+                $key = match (true) {
+                    $item->sector_id !== null =>
+                    "sector:{$item->sector_id}",
+
+                    $item->project_id !== null =>
+                    "project:{$item->project_id}",
+
+                    default =>
+                    "global",
+                };
+
+                return [$key => $item->min_quantity];
+            })
+            ->all();
     }
 }

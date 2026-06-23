@@ -50,7 +50,7 @@ class StockConsultaController extends Controller
         // Estoques ativos do projeto, agrupados por produto + setor
         $stocks = $project->stocks()
             ->with([
-                'product:id,name,sku,unit',
+                'product.stockMinimals',
                 'sector:id,name',
             ])
             ->where('active', true)
@@ -64,7 +64,10 @@ class StockConsultaController extends Controller
             ->get()
             ->map(function ($stock) use ($project) {
                 $product = $stock->product;
-                $minQty  = $product->resolveMinStock(sectorId: $stock->sector_id);
+                $minQty = $product->resolveLoadedMinStock(
+                    projectId: $project->id,
+                    sectorId: $stock->sector_id,
+                );
 
                 $status = match (true) {
                     $stock->total_quantity <= 0                              => 'empty',
