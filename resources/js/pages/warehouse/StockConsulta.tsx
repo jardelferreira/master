@@ -5,6 +5,7 @@ import { useState, useCallback } from 'react';
 import WarehouseLayout from '@/pages/layouts/WarehouseLayout';
 import { DataTable } from '@/pages/components/DataTable';
 import StockConsultaDrawer from '@/pages/components/warehouse/StockConsultaDrawer';
+import StockLayout from '../layouts/StockLayout';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -230,7 +231,7 @@ export default function StockConsulta() {
 }
 
 StockConsulta.layout = (page: React.ReactNode) => (
-    <WarehouseLayout>{page}</WarehouseLayout>
+    <StockLayout>{page}</StockLayout>
 );
 
 // ─── Sub-components ──────────────────────────────────────────────────────────

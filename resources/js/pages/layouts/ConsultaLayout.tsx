@@ -3,38 +3,80 @@ import { router, usePage } from '@inertiajs/react';
 import { LogOut, Package } from 'lucide-react';
 
 type PageProps = {
-    user?: { name: string };
+    user?: {
+        name: string;
+    };
 };
 
-export default function ConsultaLayout({ children }: PropsWithChildren) {
+export default function ConsultaLayout({
+    children,
+}: PropsWithChildren) {
     const { user } = usePage<PageProps>().props;
 
     return (
-        <div className="min-h-screen bg-zinc-950 text-white">
+        <div className="min-h-screen bg-slate-50">
 
-            {/* ── Header ─────────────────────────────────────────────────── */}
-            <header className="sticky top-0 z-30 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md">
-                <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-5">
+            {/* HEADER */}
+            <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
+                <div className="max-w-7xl mx-auto h-14 px-6 flex items-center justify-between">
 
-                    <div className="flex items-center gap-2.5">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500">
-                            <Package size={14} className="text-white" />
+                    <div className="flex items-center gap-3">
+
+                        <div
+                            className="
+                                h-9 w-9
+                                rounded-xl
+                                bg-blue-600
+                                text-white
+                                flex
+                                items-center
+                                justify-center
+                                shadow-sm
+                            "
+                        >
+                            <Package size={18} />
                         </div>
-                        <span className="text-sm font-semibold tracking-wide text-white/90">
-                            Consulta de Estoque
-                        </span>
+
+                        <div>
+                            <p className="text-xs text-slate-400 uppercase tracking-widest">
+                                Estoque Master
+                            </p>
+
+                            <h1 className="text-sm font-semibold text-slate-900">
+                                Consulta de Estoque
+                            </h1>
+                        </div>
                     </div>
 
                     {user && (
-                        <div className="flex items-center gap-4">
-                            <span className="hidden text-xs text-white/40 sm:block">
+                        <div className="flex items-center gap-3">
+
+                            <span className="hidden md:block text-sm text-slate-600">
                                 {user.name}
                             </span>
+
                             <button
-                                onClick={() => router.post(route('stock.logout'))}
-                                className="flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-white/60 transition hover:border-white/20 hover:text-white/90"
+                                onClick={() =>
+                                    router.post(route('stock.logout'))
+                                }
+                                className="
+                                    flex
+                                    items-center
+                                    gap-2
+                                    rounded-xl
+                                    border
+                                    border-slate-200
+                                    bg-white
+                                    px-3
+                                    py-2
+                                    text-sm
+                                    font-medium
+                                    text-slate-600
+                                    transition
+                                    hover:bg-slate-50
+                                "
                             >
-                                <LogOut size={12} />
+                                <LogOut size={16} />
                                 Sair
                             </button>
                         </div>
@@ -42,8 +84,8 @@ export default function ConsultaLayout({ children }: PropsWithChildren) {
                 </div>
             </header>
 
-            {/* ── Content ────────────────────────────────────────────────── */}
-            <main className="mx-auto max-w-5xl px-5 py-8">
+            {/* CONTEÚDO */}
+            <main className="max-w-7xl mx-auto p-6">
                 {children}
             </main>
         </div>
