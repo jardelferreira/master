@@ -558,7 +558,7 @@ export default function Home() {
                         <div className="hero-image-wrap">
                             <div className="hero-image-glow" />
                             <div className="hero-image-card">
-                                <img src="/gestao2.png" alt="Dashboard view" />
+                                <img src="images/gestao.png" alt="Dashboard view" />
                             </div>
                         </div>
                     </div>
