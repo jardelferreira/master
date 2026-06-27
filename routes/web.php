@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\FlowInvoiceController;
+use App\Models\Inventory;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Product;
@@ -33,15 +34,7 @@ Route::get('/debug-headers', function () {
 });
 Route::get('flow', [FlowInvoiceController::class, 'run']);
 Route::get('/teste', function () {
-    // dd(Sector::find(7)->load('project'));
-    $team = Team::first();
-    dd($team->children()->count());
-// Auth::user()->assignRole('super.admin');
-// Auth::user()->projects()->syncWithoutDetaching([1]);
-
-// dd(User::find(12)->roles, Project::find(2)->users);
-// Auth::user()->projects()->syncWithoutDetaching([1]);
-// dd(Auth::user()->projects, Project::all('id'));
+dd(Inventory::all());
 
 });
 

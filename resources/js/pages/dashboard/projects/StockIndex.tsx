@@ -390,6 +390,8 @@ export default function StockIndex({ project, stocks, summary }: Props) {
             icon: <ArrowDownCircle size={16} />,
             className:
                 'bg-emerald-600 text-white hover:bg-emerald-700 transition-colors',
+            // DataTableHeaderAction requires a permissions property
+            permissions: [],
             href: route('admin.stock.pending',project.id),
         },
     ];

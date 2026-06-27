@@ -46,6 +46,13 @@ class Project extends Model
         return $this->hasMany(Stock::class);
     }
 
+    public function inventories()
+    {
+        return $this->hasMany(
+            Inventory::class
+        );
+    }
+
     public function getStockList(): HasMany
     {
         return $this->hasMany(Stock::class)

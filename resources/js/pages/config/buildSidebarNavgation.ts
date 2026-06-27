@@ -15,6 +15,7 @@ import {
     Warehouse,
     File,
     Network,
+    ClipboardList,
 } from 'lucide-react';
 
 import {
@@ -248,14 +249,17 @@ export function buildNavigation(
 
         {
             type: 'link',
-            href: route(
-                'warehouse.index',
-            ),
-            label:
-                'Estoques',
+            href: route('warehouse.index'),
+            label:'Almoxarifado',
             icon: Warehouse,
-            active:
-                'warehouse.index',
+            active:'warehouse.index',
+        },
+        {
+            type: 'link',
+            href: route('admin.inventories.index'),
+            label:'Inventários',
+            icon: ClipboardList,
+            active:'admin.inventories.index',
         },
     ];
 }

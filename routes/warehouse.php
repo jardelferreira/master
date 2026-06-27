@@ -4,6 +4,7 @@ use App\Http\Controllers\Warehouse\Auth\WarehouseAuthController;
 use App\Http\Controllers\Warehouse\WarehouseDashboardController;
 use App\Http\Controllers\Warehouse\WarehouseMovementController;
 use App\Http\Controllers\Warehouse\WarehouseStockController;
+use App\Http\Controllers\Warehouse\InventoryConferenciaController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('warehouse')
@@ -56,6 +57,18 @@ Route::prefix('warehouse')
                     'returnableMovements',
                 ]
             )->name('projects.movements.returnable');
+
+            Route::prefix('inventories')
+                ->name('inventories.')
+                ->controller(InventoryConferenciaController::class)
+                ->group(function () {
+                    Route::get('/', 'index')
+                        ->name('index');
+                    Route::get('/{inventory}', 'show')
+                        ->name('show');
+                    Route::put('/items/{inventoryItem}', 'updateItem')
+                        ->name('items.update');
+                });
         });
     });
 

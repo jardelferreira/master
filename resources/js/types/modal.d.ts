@@ -11,6 +11,8 @@ export type ConfirmModalProps = {
     description?: string;
     confirmText?: string;
     cancelText?: string;
+    variant?: 'primary' | 'destructive';
+    loading?: boolean;
     onConfirm: () => void;
     onClose: () => void;
 };

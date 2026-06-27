@@ -81,13 +81,16 @@ export function DataTable<T extends { id: string | number }>({
 
             setRowSelection(newSelection);
 
-            const selectedRows = table
-                .getCoreRowModel()
-                .rows
-                .filter((row) => newSelection[row.id])
-                .map((row) => row.original);
-
-            onRowSelectionChange?.(selectedRows);
+            queueMicrotask(() => {
+                onRowSelectionChange?.(
+                    table
+                        .getSelectedRowModel()
+                        .rows.map(
+                            (row) =>
+                                row.original,
+                        ),
+                );
+            });
         },
 
         globalFilterFn: (row, _, filterValue) => {
@@ -281,85 +284,85 @@ export function DataTable<T extends { id: string | number }>({
                                 Todos
                             </option>
                         </select>
-                    {enableExport && (
-                        <>
+                        {enableExport && (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={
+                                        exportExcel
+                                    }
+                                    className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
+                                >
+                                    <Download size={16} />
+                                    Excel
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={
+                                        exportCsv
+                                    }
+                                    className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
+                                >
+                                    CSV
+                                </button>
+                            </>
+                        )}
+
+                        {enablePrint && (
                             <button
                                 type="button"
-                                onClick={
-                                    exportExcel
-                                }
-                                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
+                                onClick={printTable}
+                                className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100"
                             >
-                                <Download size={16} />
-                                Excel
+                                <Printer size={16} />
+                                Imprimir
                             </button>
+                        )}
 
-                            <button
-                                type="button"
-                                onClick={
-                                    exportCsv
-                                }
-                                className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50"
-                            >
-                                CSV
-                            </button>
-                        </>
-                    )}
-
-                    {enablePrint && (
-                        <button
-                            type="button"
-                            onClick={printTable}
-                            className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100"
-                        >
-                            <Printer size={16} />
-                            Imprimir
-                        </button>
-                    )}
-
-                    {headerActions?.map(
-                        (action, index) => (
-                            <Can
-                                key={index}
-                                permissions={
-                                    action.permissions
-                                }
-                            >
-                                {action.type ===
-                                    'link' ? (
-                                    <Link
-                                        href={
-                                            action.href!
-                                        }
-                                        className={`inline-flex items-center gap-2 rounded-xl bg-core-600 px-4 py-2 text-sm font-medium text-white hover:bg-core-700 ${action.className ?? ''}`}
-                                    >
-                                        {
-                                            action.icon
-                                        }
-                                        {
-                                            action.label
-                                        }
-                                    </Link>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        onClick={
-                                            action.onClick
-                                        }
-                                        className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium hover:bg-gray-50 ${action.className ?? ''}`}
-                                    >
-                                        {
-                                            action.icon
-                                        }
-                                        {
-                                            action.label
-                                        }
-                                    </button>
-                                )}
-                            </Can>
-                        ),
-                    )}
-                </div>
+                        {headerActions?.map(
+                            (action, index) => (
+                                <Can
+                                    key={index}
+                                    permissions={
+                                        action.permissions
+                                    }
+                                >
+                                    {action.type ===
+                                        'link' ? (
+                                        <Link
+                                            href={
+                                                action.href!
+                                            }
+                                            className={`inline-flex items-center gap-2 rounded-xl bg-core-600 px-4 py-2 text-sm font-medium text-white hover:bg-core-700 ${action.className ?? ''}`}
+                                        >
+                                            {
+                                                action.icon
+                                            }
+                                            {
+                                                action.label
+                                            }
+                                        </Link>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={
+                                                action.onClick
+                                            }
+                                            className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium hover:bg-gray-50 ${action.className ?? ''}`}
+                                        >
+                                            {
+                                                action.icon
+                                            }
+                                            {
+                                                action.label
+                                            }
+                                        </button>
+                                    )}
+                                </Can>
+                            ),
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -392,13 +395,12 @@ export function DataTable<T extends { id: string | number }>({
                                                         const handler = table.getToggleAllPageRowsSelectedHandler();
                                                         if (typeof handler === 'function') handler(e as any);
                                                     }}
-                                                    className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded border-2 transition-colors ${
-                                                        table.getIsAllPageRowsSelected()
+                                                    className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded border-2 transition-colors ${table.getIsAllPageRowsSelected()
                                                             ? 'border-blue-600 bg-blue-600'
                                                             : table.getIsSomePageRowsSelected()
                                                                 ? 'border-blue-400 bg-blue-100'
                                                                 : 'border-gray-300 bg-white hover:border-blue-400'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {table.getIsAllPageRowsSelected() && (
                                                         <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">
@@ -447,13 +449,11 @@ export function DataTable<T extends { id: string | number }>({
                                 <tr
                                     key={row.original.id}
                                     onClick={() => enableRowSelection && row.toggleSelected()}
-                                    className={`border-b transition-colors ${
-                                        enableRowSelection ? 'cursor-pointer' : ''
-                                    } ${
-                                        row.getIsSelected()
+                                    className={`border-b transition-colors ${enableRowSelection ? 'cursor-pointer' : ''
+                                        } ${row.getIsSelected()
                                             ? 'bg-blue-50 hover:bg-blue-100'
                                             : 'hover:bg-gray-50'
-                                    }`}
+                                        }`}
                                 >
                                     {enableRowSelection && (
                                         <td
@@ -462,11 +462,10 @@ export function DataTable<T extends { id: string | number }>({
                                         >
                                             <div
                                                 onClick={row.getToggleSelectedHandler()}
-                                                className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded border-2 transition-colors ${
-                                                    row.getIsSelected()
+                                                className={`flex h-5 w-5 cursor-pointer items-center justify-center rounded border-2 transition-colors ${row.getIsSelected()
                                                         ? 'border-blue-600 bg-blue-600'
                                                         : 'border-gray-300 bg-white hover:border-blue-400'
-                                                }`}
+                                                    }`}
                                             >
                                                 {row.getIsSelected() && (
                                                     <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">

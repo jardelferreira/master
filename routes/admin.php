@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ApplicationAreaController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\InvoiceItemController;
 use App\Http\Controllers\Admin\InvoiceMovementController;
@@ -280,4 +281,33 @@ Route::middleware(['web', 'auth', 'verified'])->prefix('admin')->name('admin.')-
     )->name(
         'projects.application-areas.destroy'
     );
+
+    Route::resource(
+        'inventories',
+        InventoryController::class
+    )->only([
+        'index',
+        'create',
+        'store',
+        'show',
+    ]);
+
+    Route::prefix('inventories')
+        ->name('inventories.')
+        ->group(function () {
+            Route::get('projects/{project}/sectors', [InventoryController::class, 'sectors'])->name('sectors');
+            Route::get('projects/{project}/users', [InventoryController::class, 'users'])->name('users');
+            Route::get('projects/{project}/stocks', [InventoryController::class, 'stocks'])->name('stocks');
+            Route::post('{inventory}/finish', [InventoryController::class, 'finish'])->name('finish');
+            Route::post('{inventory}/cancel', [InventoryController::class, 'cancel'])->name('cancel');
+            Route::post('{inventory}/approve', [InventoryController::class, 'approve'])->name('approve');
+        });
+    Route::get(
+        'inventories/items/{inventoryItem}',
+        [InventoryController::class, 'item']
+    )->name('inventories.items.show');
+    Route::put(
+        'inventories/items/{inventoryItem}',
+        [InventoryController::class, 'updateItem'],
+    )->name('inventories.items.update');
 });

@@ -8,7 +8,7 @@ export function PageHeader({
     actions?: React.ReactNode;
 }) {
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-white shadow-sm p-4 m-2 rounded-2xl">
             <div>
                 <h1 className="text-xl font-semibold text-slate-900">
                     {title}

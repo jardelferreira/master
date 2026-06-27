@@ -4,6 +4,7 @@ import {
     History,
     FolderGit2,
     Warehouse,
+    ClipboardList,
 } from 'lucide-react';
 
 type Project = {
@@ -34,10 +35,17 @@ export function buildWarehouseNavigation(
     return [
         {
             type: 'link',
-            label: 'Warehouse',
+            label: 'Almoxarifado',
             href: route('warehouse.index'),
             icon: Warehouse,
             active: 'warehouse.index',
+        },
+        {
+            type: 'link',
+            label: 'Inventários',
+            href: route('warehouse.inventories.index'),
+            icon: ClipboardList,
+            active: 'warehouse.inventories.index',
         },
 
         ...projects.map((project) => ({

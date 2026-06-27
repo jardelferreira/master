@@ -206,7 +206,7 @@ export default function StockConsulta() {
                         variant="warehouse"
                         searchPlaceholder="Buscar produto, SKU ou setor..."
                         defaultPageSize={25}
-                        pageSizeOptions={[10, 25, 50, 100]}
+                        pageSizeOptions={[10, 25, 50, 100,0]}
                         enableExport
                         exportFileName={`consulta-${project.name}`}
                     />
@@ -215,7 +215,7 @@ export default function StockConsulta() {
                 {/* ── Lista mobile ────────────────────────────────────────── */}
                 <MobileStockList
                     stocks={stocks}
-                    onSelect={openDrawer}
+                    onSelect={openDrawer} 
                 />
             </div>
 

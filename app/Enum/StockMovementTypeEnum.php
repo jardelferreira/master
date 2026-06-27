@@ -10,8 +10,10 @@ enum StockMovementTypeEnum: string
     case ASSIGNMENT = 'assignment';   // entrega para usuário (posse)
     case ASSIGNMENT_RETURN = 'assignment_return';
     case ADJUST = 'adjust';           // ajuste manual
+    case INVENTORY_ADJUSTMENT = 'inventory_adjust';
     case RETURN = 'return';           // devolução para o estoque
     case LOSS = 'loss';               // perda / descarte
+    case EXIT = 'exit';
 
     /*
     |--------------------------------------------------------------------------
@@ -35,12 +37,13 @@ enum StockMovementTypeEnum: string
             self::TRANSFER,
             self::ASSIGNMENT,
             self::LOSS,
+            self::EXIT,
         ]);
     }
 
     public function isAdjust(): bool
     {
-        return $this === self::ADJUST;
+        return $this === self::ADJUST || $this === self::INVENTORY_ADJUSTMENT;
     }
 
     /*
@@ -53,11 +56,13 @@ enum StockMovementTypeEnum: string
     {
         return match ($this) {
             self::ENTRY => 'Entrada',
+            self::EXIT => 'Saída',
             self::CONSUMPTION => 'Consumo',
             self::TRANSFER => 'Transferência',
             self::ASSIGNMENT => 'Atribuição / Posse',
             self::ASSIGNMENT_RETURN => 'Devolução / retorno',
             self::ADJUST => 'Ajuste',
+            self::INVENTORY_ADJUSTMENT => "Ajuste de inventário",
             self::RETURN => 'Devolução',
             self::LOSS => 'Perda / Descarte',
         };
@@ -68,10 +73,12 @@ enum StockMovementTypeEnum: string
         return match ($this) {
             self::ENTRY => 'bg-emerald-500/20 text-emerald-300',
             self::CONSUMPTION => 'bg-red-500/20 text-red-300',
+            self::EXIT => 'bg-red-500/20 text-red-300',
             self::TRANSFER => 'bg-blue-500/20 text-blue-300',
             self::ASSIGNMENT => 'bg-purple-500/20 text-purple-300',
             self::ASSIGNMENT_RETURN => 'bg-bue-500/20 text-bue-300',
             self::ADJUST => 'bg-yellow-500/20 text-yellow-300',
+            self::INVENTORY_ADJUSTMENT => 'bg-yellow-500/20 text-yellow-300',
             self::RETURN => 'bg-cyan-500/20 text-cyan-300',
             self::LOSS => 'bg-orange-500/20 text-orange-300',
         };

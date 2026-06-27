@@ -47,8 +47,32 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function projects():BelongsToMany
+    public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class);
+    }
+
+    public function assignedInventories()
+    {
+        return $this->belongsToMany(
+            Inventory::class,
+            'inventory_users'
+        );
+    }
+
+    public function createdInventories()
+    {
+        return $this->hasMany(
+            Inventory::class,
+            'created_by'
+        );
+    }
+
+    public function approvedInventories()
+    {
+        return $this->hasMany(
+            Inventory::class,
+            'approved_by'
+        );
     }
 }
