@@ -93,7 +93,7 @@ class InventoryConferenciaController extends BaseController
         Request $request,
         InventoryItem $inventoryItem,
     ) {
-        $userId = Auth::guard('stock')->id();
+        $userId = Auth::guard('warehouse')->id();
 
         abort_unless(
             $inventoryItem->inventory

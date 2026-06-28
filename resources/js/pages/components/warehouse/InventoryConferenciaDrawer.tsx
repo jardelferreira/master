@@ -181,12 +181,13 @@ function DrawerContent({
 
         try {
             const res = await axios.put(
-                route('warehouse.inventories.items.update', item.id),
+                route('warehouse.inventories.items.update', item.id), 
                 {
                     counted_quantity: qty,
                     notes: notes || null,
                 },
             );
+            console.log(res)
 
             setSuccess(true);
             onItemUpdated(res.data.item, res.data.statistics);
