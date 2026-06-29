@@ -51,6 +51,7 @@
         "globals": "^15.14.0",
         "html-to-image": "^1.11.13",
         "jspdf": "^4.2.1",
+        "jspdf-autotable": "^5.0.8",
         "laravel-vite-plugin": "^3.0.0",
         "lucide-react": "^1.17.0",
         "radix-ui": "^1.4.3",

@@ -81,6 +81,7 @@ export default function Show({
                     <InventoryItemsTable
                         items={items}
                         onCount={handleCount}
+                        meta={inventory}
                     />
 
                 </PageSection>
