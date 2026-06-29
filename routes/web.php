@@ -34,7 +34,7 @@ Route::get('/debug-headers', function () {
 });
 Route::get('flow', [FlowInvoiceController::class, 'run']);
 Route::get('/teste', function () {
-dd(Inventory::all());
+echo now();
 
 });
 
