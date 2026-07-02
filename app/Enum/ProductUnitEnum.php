@@ -9,6 +9,8 @@ enum ProductUnitEnum: string
     case BOX = 'cx';
     case KIT = 'kit';
 
+    case BAG = 'bag';
+
     case TON = 'ton';
     case KG = 'kg';
     case G = 'g';
@@ -48,6 +50,7 @@ enum ProductUnitEnum: string
             self::BOX    => 'Caixa',
             self::KIT    => 'Kit',
             self::KG     => 'Quilograma',
+            self::BAG    => 'Saco',
             self::G      => 'Grama',
             self::M      => 'Metro',
             self::CM     => 'Centímetro',
